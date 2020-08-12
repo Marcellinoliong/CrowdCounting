@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 from torchvision import models
+import torch.nn.functional as F
+from efficientnet_pytorch import EfficientNet
 
 class conv_block_nested(nn.Module):
 
@@ -12,10 +14,13 @@ class conv_block_nested(nn.Module):
         self.conv2 = nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1, bias=True)
         self.bn2 = nn.BatchNorm2d(out_ch)
 
-        self.dense = models.densenet201(pretrained=pretrained)
+        self.res = EfficientNet.from_pretrained('efficientnet-b7')
+        self.frontend = nn.Sequential(
+            self.res._conv_stem, self.res._bn0, self.res._swish
+        )
 
     def forward(self, x):
-        x = self.dense.forward(x)
+        x = self.frontend(x)
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.activation(x)
@@ -35,7 +40,7 @@ class Nested_UNet(nn.Module):
         filters = [n1, n1 * 2, n1 * 4, n1 * 8, n1 * 16]
 
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.Up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        #self.Up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
 
         self.conv0_0 = conv_block_nested(in_ch, filters[0], filters[0])
         self.conv1_0 = conv_block_nested(filters[0], filters[1], filters[1])
@@ -63,22 +68,32 @@ class Nested_UNet(nn.Module):
 
         x0_0 = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
-        x0_1 = self.conv0_1(torch.cat([x0_0, self.Up(x1_0)], 1))
+        x1_0Up = F.interpolate(x1_0,size=[x.shape[2], x.shape[3]])
+        x0_1 = self.conv0_1(torch.cat([x0_0, x1_0Up], 1))
 
         x2_0 = self.conv2_0(self.pool(x1_0))
-        x1_1 = self.conv1_1(torch.cat([x1_0, self.Up(x2_0)], 1))
-        x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, self.Up(x1_1)], 1))
+        x2_0Up = F.interpolate(x2_0,size=[x.shape[2], x.shape[3]])
+        x1_1 = self.conv1_1(torch.cat([x1_0, x2_0Up], 1))
+        x1_1Up = F.interpolate(x1_1,size=[x.shape[2], x.shape[3]])
+        x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, x1_1Up], 1))
 
         x3_0 = self.conv3_0(self.pool(x2_0))
-        x2_1 = self.conv2_1(torch.cat([x2_0, self.Up(x3_0)], 1))
-        x1_2 = self.conv1_2(torch.cat([x1_0, x1_1, self.Up(x2_1)], 1))
-        x0_3 = self.conv0_3(torch.cat([x0_0, x0_1, x0_2, self.Up(x1_2)], 1))
+        x3_0Up = F.interpolate(x3_0,size=[x.shape[2], x.shape[3]])
+        x2_1 = self.conv2_1(torch.cat([x2_0, x3_0Up], 1))
+        x2_1Up = F.interpolate(x2_1,size=[x.shape[2], x.shape[3]])
+        x1_2 = self.conv1_2(torch.cat([x1_0, x1_1, x2_1Up], 1))
+        x1_2Up = F.interpolate(x1_2,size=[x.shape[2], x.shape[3]])
+        x0_3 = self.conv0_3(torch.cat([x0_0, x0_1, x0_2, x1_2Up], 1))
 
         x4_0 = self.conv4_0(self.pool(x3_0))
-        x3_1 = self.conv3_1(torch.cat([x3_0, self.Up(x4_0)], 1))
-        x2_2 = self.conv2_2(torch.cat([x2_0, x2_1, self.Up(x3_1)], 1))
-        x1_3 = self.conv1_3(torch.cat([x1_0, x1_1, x1_2, self.Up(x2_2)], 1))
-        x0_4 = self.conv0_4(torch.cat([x0_0, x0_1, x0_2, x0_3, self.Up(x1_3)], 1))
+        x4_0Up = F.interpolate(x4_0,size=[x.shape[2], x.shape[3]])
+        x3_1 = self.conv3_1(torch.cat([x3_0, x4_0Up], 1))
+        x3_1Up = F.interpolate(x3_1,size=[x.shape[2], x.shape[3]])
+        x2_2 = self.conv2_2(torch.cat([x2_0, x2_1, x3_1Up], 1))
+        x2_2Up = F.interpolate(x2_2,size=[x.shape[2], x.shape[3]])
+        x1_3 = self.conv1_3(torch.cat([x1_0, x1_1, x1_2, x2_2Up], 1))
+        x1_3Up = F.interpolate(x1_3,size=[x.shape[2], x.shape[3]])
+        x0_4 = self.conv0_4(torch.cat([x0_0, x0_1, x0_2, x0_3, x1_3Up], 1))
 
         output = self.final(x0_4)
         return output
