@@ -75,12 +75,12 @@ class Nested_UNet(nn.Module):
 
         self.final = nn.Conv2d(filters[0], out_ch, kernel_size=1)
 
-        #self.res = EfficientNet.from_pretrained('efficientnet-b7')
-        #self.res.in_channels = 64
-        #self.frontend = nn.Sequential(
-        #   self.res._conv_stem, self.res._bn0
-        #)
-        self.dense = models.densenet201(pretrained=pretrained)
+        self.res = EfficientNet.from_pretrained('efficientnet-b7')
+        self.res.in_channels = 64
+        self.frontend = nn.Sequential(
+           self.res._conv_stem, self.res._bn0, self.res._swish
+        )
+        #self.dense = models.DenseNet()
 
     def forward(self, x):
         #x = self.dense.features(x)
@@ -93,8 +93,7 @@ class Nested_UNet(nn.Module):
 
 
         #x0_0  = self.conv0_0(x)
-        #x0_0  = self.frontend(x)
-        x0_0 = self.dense.features(x)
+        x0_0  = self.frontend(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
