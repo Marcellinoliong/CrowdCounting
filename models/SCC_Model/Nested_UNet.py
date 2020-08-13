@@ -64,8 +64,8 @@ class Nested_UNet(nn.Module):
         self.final = nn.Conv2d(filters[0], out_ch, kernel_size=1)
 
         self.res = EfficientNet.from_pretrained('efficientnet-b7')
-        self.res.in_channels = filters[0]
-        self.res.out_channels = out_ch
+        self.res.in_channels = 1
+        self.res.out_channels = 3
         self.frontend = nn.Sequential(
            self.res._conv_stem, self.res._bn0, self.res._swish 
         )
