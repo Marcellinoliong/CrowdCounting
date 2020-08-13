@@ -92,10 +92,11 @@ class Nested_UNet2(nn.Module):
 
         final = (final_1 + final_2 + final_3 + final_4) / 4
 
-        if self.is_ds:
-            return torch.sigmoid(final)
-        else:
-            return torch.sigmoid(final_4)
+        #if self.is_ds:
+        #    return torch.sigmoid(final)
+        #else:
+        #    return torch.sigmoid(final_4)
+        return final
 
 if __name__ == '__main__':
     import time
