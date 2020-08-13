@@ -52,6 +52,7 @@ class Nested_UNet_Efficient(nn.Module):
 
         self.deep_supervision = deep_supervision
 
+        self.activation = nn.ReLU(inplace=True)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         #self.Up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
 
@@ -76,12 +77,12 @@ class Nested_UNet_Efficient(nn.Module):
         self.conv0_4 = conv_block_nested(filters[0]*4 + filters[1], filters[0], filters[0])
 
         if self.deep_supervision:
-            self.final1 = nn.Conv2d(filters[0], out_ch, kernel_size=1, NL='relu')
-            self.final2 = nn.Conv2d(filters[0], out_ch, kernel_size=1, NL='relu')
-            self.final3 = nn.Conv2d(filters[0], out_ch, kernel_size=1, NL='relu')
-            self.final4 = nn.Conv2d(filters[0], out_ch, kernel_size=1, NL='relu')
+            self.final1 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
+            self.final2 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
+            self.final3 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
+            self.final4 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
         else:
-            self.final = nn.Conv2d(filters[0], out_ch, kernel_size=1, NL='relu')
+            self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
         self.res = EfficientNet.from_pretrained('efficientnet-b7')
         self.res.in_channels = 64
