@@ -9,42 +9,42 @@ class conv_block_nested(nn.Module):
 
     def __init__(self, in_ch, mid_ch, out_ch):
         super(conv_block_nested, self).__init__()
-        #self.activation = nn.ReLU(inplace=True)
-        #self.conv1 = nn.Conv2d(in_ch, mid_ch, kernel_size=3, padding=1, bias=True)
-        #self.bn1 = nn.BatchNorm2d(mid_ch)
-        #self.conv2 = nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1, bias=True)
-        #self.bn2 = nn.BatchNorm2d(out_ch)
+        self.activation = nn.ReLU(inplace=True)
+        self.conv1 = nn.Conv2d(in_ch, mid_ch, kernel_size=3, padding=1, bias=True)
+        self.bn1 = nn.BatchNorm2d(mid_ch)
+        self.conv2 = nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1, bias=True)
+        self.bn2 = nn.BatchNorm2d(out_ch)
 
         #self.seq = nn.Sequential(nn.Conv2d(in_ch, mid_ch, 3, same_padding=True, NL='relu'),
                                      #nn.Conv2d(mid_ch, out_ch, 3, same_padding=True, NL='relu'))
-        self.convOut = nn.Sequential(nn.Conv2d(in_ch, mid_ch, kernel_size=1),nn.ReLU())
-        self.convDU = convDU(in_out_channels=out_ch,kernel_size=(1,9))
-        self.convLR = convLR(in_out_channels=out_ch,kernel_size=(9,1))
+        #self.convOut = nn.Sequential(nn.Conv2d(in_ch, mid_ch, kernel_size=1),nn.ReLU())
+        #self.convDU = convDU(in_out_channels=out_ch,kernel_size=(1,9))
+        #self.convLR = convLR(in_out_channels=out_ch,kernel_size=(9,1))
 
-        self.output_layer = nn.Sequential(nn.Conv2d(64, 1, kernel_size=1),nn.ReLU())
+        #self.output_layer = nn.Sequential(nn.Conv2d(64, 1, kernel_size=1),nn.ReLU())
 
     def forward(self, x):
-        #x = self.conv1(x)
-        #x = self.bn1(x)
-        #x = self.activation(x)
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.activation(x)
 
-        #x = self.conv2(x)
-        #x = self.bn2(x)
-        #output = self.activation(x)
+        x = self.conv2(x)
+        x = self.bn2(x)
+        output = self.activation(x)
 
         #output= self.seq(x)
 
-        x = self.convOut(x)
-        x = self.convDU(x)
-        x = self.convLR(x)
+        #x = self.convOut(x)
+        #x = self.convDU(x)
+        #x = self.convLR(x)
 
-        x = self.output_layer(x)
+        #x = self.output_layer(x)
 
         return output
 
 class Nested_UNet(nn.Module):
 
-    def __init__(self, in_ch=3, out_ch=1,  pretrained=True):
+    def __init__(self, in_ch=64, out_ch=1,  pretrained=True):
         super(Nested_UNet, self).__init__()
 
         n1 = 64
