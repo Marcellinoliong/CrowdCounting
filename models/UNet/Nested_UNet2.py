@@ -8,7 +8,7 @@ from torchvision import models
 class Nested_UNet2(nn.Module):
 
     def __init__(self, in_channels=3, n_classes=1, feature_scale=4, is_deconv=True, is_batchnorm=True, is_ds=True):
-        super(UNet_2Plus, self).__init__()
+        super(Nested_UNet2, self).__init__()
         self.is_deconv = is_deconv
         self.in_channels = in_channels
         self.is_batchnorm = is_batchnorm
