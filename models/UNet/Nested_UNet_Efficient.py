@@ -42,7 +42,7 @@ class conv_block_nested(nn.Module):
 
         return output
 
-class Nested_UNet(nn.Module):
+class Nested_UNet_Efficient(nn.Module):
 
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True):
         super(Nested_UNet, self).__init__()
@@ -53,7 +53,7 @@ class Nested_UNet(nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         #self.Up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
 
-        self.conv0_0 = conv_block_nested(in_ch, filters[0], filters[0])
+        self.conv0_0 = conv_block_nested(filters[0], filters[0], filters[0])
         self.conv1_0 = conv_block_nested(filters[0], filters[1], filters[1])
         self.conv2_0 = conv_block_nested(filters[1], filters[2], filters[2])
         self.conv3_0 = conv_block_nested(filters[2], filters[3], filters[3])
@@ -84,7 +84,7 @@ class Nested_UNet(nn.Module):
 
     def forward(self, x):
         #x = self.dense.features(x)
-        #x = self.frontend(x)
+        x = self.frontend(x)
         #for idx in range(18):            
         #   drop_connect_rate = self.res._global_params.drop_connect_rate
         #   if drop_connect_rate:
@@ -92,8 +92,8 @@ class Nested_UNet(nn.Module):
         #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
 
 
-        #x0_0  = self.conv0_0(x)
-        x0_0  = self.frontend(x)
+        #x0_0  = self.frontend(x)
+        x0_0  = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
