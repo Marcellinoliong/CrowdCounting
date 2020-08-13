@@ -119,7 +119,7 @@ class outconv(nn.Module):
     def forward(self, x):
         x = self.upsample(x)
         x = self.conv(x)
-        x = torch.sigmoid(x)
+        #x = torch.sigmoid(x)
         return x
 
 
