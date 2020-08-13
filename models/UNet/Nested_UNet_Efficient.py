@@ -44,7 +44,7 @@ class conv_block_nested(nn.Module):
 
 class Nested_UNet_Efficient(nn.Module):
 
-    def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=True):
+    def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
         super(Nested_UNet_Efficient, self).__init__()
 
         n1 = 64
