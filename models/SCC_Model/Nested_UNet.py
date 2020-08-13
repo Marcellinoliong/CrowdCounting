@@ -67,7 +67,7 @@ class Nested_UNet(nn.Module):
         self.res.in_channels = in_ch
         self.res.out_channels = filters[0]
         self.frontend = nn.Sequential(
-           self.res._conv_stem, self.res._bn0, self.res._swish 
+           self.res._conv_stem, self.res._bn0#, self.res._swish 
         )
         #self.dense = models.DenseNet()
 
