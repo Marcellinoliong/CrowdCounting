@@ -39,7 +39,7 @@ __C.LAMBDA_1 = 1e-3
 
 
 # print 
-__C.PRINT_FREQ = 10
+__C.PRINT_FREQ = 20
 
 now = time.strftime("%m-%d_%H-%M", time.localtime())
 
@@ -59,7 +59,7 @@ __C.EXP_PATH = './exp' # the path of logs, checkpoints, and current codes
 
 #------------------------------VAL------------------------
 __C.VAL_DENSE_START = 200
-__C.VAL_FREQ = 5 # Before __C.VAL_DENSE_START epoches, the freq is set as __C.VAL_FREQ
+__C.VAL_FREQ = 10 # Before __C.VAL_DENSE_START epoches, the freq is set as __C.VAL_FREQ
 
 #------------------------------VIS------------------------
 __C.VISIBLE_NUM_IMGS = 1 #  must be 1 for training images with the different sizes
