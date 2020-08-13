@@ -3,7 +3,7 @@ import torch.nn as nn
 from torchvision import models
 import torch.nn.functional as F
 from efficientnet_pytorch import EfficientNet
-from misc.layer import convDU, convLR
+#from misc.layer import convDU, convLR
 
 class conv_block_nested(nn.Module):
 
@@ -44,7 +44,7 @@ class conv_block_nested(nn.Module):
 
 class Nested_UNet(nn.Module):
 
-    def __init__(self, in_ch=64, out_ch=1,  pretrained=True):
+    def __init__(self, in_ch=3, out_ch=1,  pretrained=True):
         super(Nested_UNet, self).__init__()
 
         n1 = 64
@@ -76,14 +76,15 @@ class Nested_UNet(nn.Module):
         self.final = nn.Conv2d(filters[0], out_ch, kernel_size=1)
 
         self.res = EfficientNet.from_pretrained('efficientnet-b7')
+        self.res.out_channels = 3
         self.frontend = nn.Sequential(
-           self.res._conv_stem, self.res._bn0, self.res._swish 
+           self.res._conv_stem, self.res._bn0, nn.ReLU(inplace=True)
         )
         #self.dense = models.DenseNet()
 
     def forward(self, x):
         #x = self.dense.features(x)
-        x = self.frontend(x)
+        #x = self.frontend(x)
 
         #for idx in range(18):            
         #   drop_connect_rate = self.res._global_params.drop_connect_rate
@@ -91,7 +92,8 @@ class Nested_UNet(nn.Module):
         #      drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
         #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
 
-        x0_0 = self.conv0_0(x)
+        #x0_0 = self.conv0_0(x)
+        x0_0 = self.frontend(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
         x0_1 = self.conv0_1(torch.cat([x0_0, self.Up(x1_0)], 1))
 
