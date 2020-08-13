@@ -32,7 +32,7 @@ class conv_block_nested(nn.Module):
 
 class Nested_UNet(nn.Module):
 
-    def __init__(self, in_ch=1, out_ch=64,  pretrained=True):
+    def __init__(self, in_ch=64, out_ch=1,  pretrained=True):
         super(Nested_UNet, self).__init__()
 
         n1 = 64
@@ -64,7 +64,7 @@ class Nested_UNet(nn.Module):
         self.final = nn.Conv2d(filters[0], out_ch, kernel_size=1)
 
         self.res = EfficientNet.from_pretrained('efficientnet-b7')
-        self.res.in_channels = 64
+        self.res.out_channels = 64
         self.frontend = nn.Sequential(
            self.res._conv_stem, self.res._bn0, self.res._avg_pooling 
         )
