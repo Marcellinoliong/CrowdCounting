@@ -81,7 +81,7 @@ class Nested_UNet(nn.Module):
         #      drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
         #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
 
-        x0_0 = self.conv0_0(x)
+        x0_0 = self.conv0_0(self.pool(x))
         x1_0 = self.conv1_0(self.pool(x0_0))
         x0_1 = self.conv0_1(torch.cat([x0_0, self.Up(x1_0)], 1))
 
