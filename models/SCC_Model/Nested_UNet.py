@@ -80,7 +80,7 @@ class Nested_UNet(nn.Module):
         #self.frontend = nn.Sequential(
         #   self.res._conv_stem, self.res._bn0
         #)
-        self.dense = models.densenet201(pretrained=true)
+        self.dense = models.densenet201(pretrained=pretrained)
 
     def forward(self, x):
         #x = self.dense.features(x)
