@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from .layers import unetConv2, unetUp_origin
 from .init_weights import init_weights
 import numpy as np
@@ -94,9 +93,9 @@ class Nested_UNet2(nn.Module):
         final = (final_1 + final_2 + final_3 + final_4) / 4
 
         if self.is_ds:
-            return F.sigmoid(final)
+            return torch.sigmoid(final)
         else:
-            return F.sigmoid(final_4)
+            return torch.sigmoid(final_4)
 
 if __name__ == '__main__':
     import time
