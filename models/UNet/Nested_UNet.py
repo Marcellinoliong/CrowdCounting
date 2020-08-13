@@ -98,7 +98,7 @@ class Nested_UNet(nn.Module):
             output2 = self.final2(x0_2)
             output3 = self.final3(x0_3)
             output4 = self.final4(x0_4)
-            return [output1, output2, output3, output4]
+            return (output1 + output2 + output3 + output4)/4
 
         else:
             output = self.final(x0_4)
