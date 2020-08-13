@@ -16,7 +16,7 @@ class conv_block_nested(nn.Module):
 
         self.res = EfficientNet.from_pretrained('efficientnet-b7')
         self.frontend = nn.Sequential(
-            self.res._conv_stem, self.res._bn0, self.res._swish
+            self.res._conv_stem, self.res._bn0#, self.res._swish
         )
 
     def forward(self, x):
