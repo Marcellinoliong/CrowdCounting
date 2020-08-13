@@ -176,7 +176,7 @@ cc = 16  # you can change it to 8, then the model can be more faster ,reaching 3
 
 
 class Unet_2D(nn.Module):
-    def __init__(self, n_channels, n_classes, mode='train'):
+    def __init__(self, n_channels=3, n_classes=1, mode='train'):
         super(Unet_2D, self).__init__()
         self.inconv = inconv(n_channels, cc)
         self.down1 = down(cc, 2 * cc)
