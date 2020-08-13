@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from .layers import unetConv2, unetUp_origin
-from init_weights import init_weights
+from .init_weights import init_weights
 import numpy as np
 class Nested_UNet2(nn.Module):
 
