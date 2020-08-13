@@ -172,7 +172,7 @@ class inconv(nn.Module):
         return x
 
 
-cc = 16  # you can change it to 8, then the model can be more faster ,reaching 35 fps on cpu when testing
+cc = 64  # you can change it to 8, then the model can be more faster ,reaching 35 fps on cpu when testing
 
 
 class Unet_2D(nn.Module):
