@@ -45,10 +45,10 @@ class Nested_UNet2(nn.Module):
         self.up_concat04 = unetUp_origin(filters[1], filters[0], self.is_deconv, 5)
 
         # final conv (without any concat)
-        self.final_1 = nn.Conv2d(filters[0], n_classes, 1)
-        self.final_2 = nn.Conv2d(filters[0], n_classes, 1)
-        self.final_3 = nn.Conv2d(filters[0], n_classes, 1)
-        self.final_4 = nn.Conv2d(filters[0], n_classes, 1)
+        self.final_1 = nn.Conv2d(filters[0], n_classes, 1, NL='relu')
+        self.final_2 = nn.Conv2d(filters[0], n_classes, 1, NL='relu')
+        self.final_3 = nn.Conv2d(filters[0], n_classes, 1, NL='relu')
+        self.final_4 = nn.Conv2d(filters[0], n_classes, 1, NL='relu')
 
         # initialise weights
         for m in self.modules():
