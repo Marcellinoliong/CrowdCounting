@@ -75,11 +75,11 @@ class Nested_UNet(nn.Module):
         #x = self.dense.features(x)
         x = self.frontend(x)
 
-        for idx in range(18):            
-           drop_connect_rate = self.res._global_params.drop_connect_rate
-           if drop_connect_rate:
-              drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
-           x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
+        #for idx in range(18):            
+        #   drop_connect_rate = self.res._global_params.drop_connect_rate
+        #   if drop_connect_rate:
+        #      drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
+        #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
 
         x0_0 = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
