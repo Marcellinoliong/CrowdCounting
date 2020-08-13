@@ -4,7 +4,6 @@ import torch.nn.functional as F
 from UNetLayer import unetConv2, unetUp_origin
 from init_weights import init_weights
 import numpy as np
-from torchvision import models
 class Nested_UNet2(nn.Module):
 
     def __init__(self, in_channels=3, n_classes=1, feature_scale=4, is_deconv=True, is_batchnorm=True, is_ds=True):
@@ -99,10 +98,17 @@ class Nested_UNet2(nn.Module):
         else:
             return F.sigmoid(final_4)
 
-#model = Nested_UNet2()
-#print('# generator parameters:', 1.0 * sum(param.numel() for param in model.parameters())/1000000)
-#params = list(model.named_parameters())
-#for i in range(len(params)):
-#    (name, param) = params[i]
-#    print(name)
-#    print(param.shape)
+if __name__ == '__main__':
+    import time
+
+    x = torch.rand((1, 3, 256, 256))
+    lnet = Nested_UNet2(3, 1, 'test')
+    # calculate model size
+    print('    Total params: %.2fMB' % (sum(p.numel() for p in lnet.parameters()) / (1024.0 * 1024) * 4))
+    t1 = time.time()
+    ##test for its speed on cpu
+    for i in range(60):
+        y0 = lnet(x)
+    t2 = time.time()
+    print('fps: ', 60 / (t2 - t1))
+    print(y0.shape)

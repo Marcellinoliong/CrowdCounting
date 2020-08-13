@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
-from torchvision import models
 import torch.nn.functional as F
-from efficientnet_pytorch import EfficientNet
 #from misc.layer import convDU, convLR
 
 class conv_block_nested(nn.Module):
@@ -59,18 +57,24 @@ class Nested_UNet(nn.Module):
 
         self.conv0_4 = conv_block_nested(filters[0]*4 + filters[1], filters[0], filters[0])
 
-        self.final = nn.Conv2d(filters[0], out_ch, kernel_size=1)
+        if self.deep_supervision:
+            self.final1 = nn.Conv2d(filters[0], out_ch, kernel_size=1)
+            self.final2 = nn.Conv2d(filters[0], out_ch, kernel_size=1)
+            self.final3 = nn.Conv2d(filters[0], out_ch, kernel_size=1)
+            self.final4 = nn.Conv2d(filters[0], out_ch, kernel_size=1)
+        else:
+            self.final = nn.Conv2d(filters[0], out_ch, kernel_size=1)
 
-        self.res = EfficientNet.from_pretrained('efficientnet-b7')
-        self.res.in_channels = 64
-        self.frontend = nn.Sequential(
-           self.res._conv_stem, self.res._bn0, self.res._swish
-        )
+        #self.res = EfficientNet.from_pretrained('efficientnet-b7')
+        #self.res.in_channels = 64
+        #self.frontend = nn.Sequential(
+        #   self.res._conv_stem, self.res._bn0, self.res._swish
+        #)
 
     def forward(self, x):
 
-        #x0_0  = self.conv0_0(x)
-        x0_0  = self.frontend(x)
+        x0_0  = self.conv0_0(x)
+        #x0_0  = self.frontend(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
@@ -99,3 +103,18 @@ class Nested_UNet(nn.Module):
         else:
             output = self.final(x0_4)
             return output
+
+if __name__ == '__main__':
+    import time
+
+    x = torch.rand((1, 3, 256, 256))
+    lnet = Nested_UNet(3, 1, 'test')
+    # calculate model size
+    print('    Total params: %.2fMB' % (sum(p.numel() for p in lnet.parameters()) / (1024.0 * 1024) * 4))
+    t1 = time.time()
+    ##test for its speed on cpu
+    for i in range(60):
+        y0 = lnet(x)
+    t2 = time.time()
+    print('fps: ', 60 / (t2 - t1))
+    print(y0.shape)
