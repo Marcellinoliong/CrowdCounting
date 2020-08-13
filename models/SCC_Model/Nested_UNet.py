@@ -32,7 +32,7 @@ class conv_block_nested(nn.Module):
 
 class Nested_UNet(nn.Module):
 
-    def __init__(self, in_ch=3, out_ch=1,  pretrained=True):
+    def __init__(self, in_ch=64, out_ch=64,  pretrained=True):
         super(Nested_UNet, self).__init__()
 
         n1 = 64
@@ -61,22 +61,23 @@ class Nested_UNet(nn.Module):
 
         self.conv0_4 = conv_block_nested(filters[0]*4 + filters[1], filters[0], filters[0])
 
-        #self.final = nn.Conv2d(filters[0], out_ch, kernel_size=1)
+        self.final = nn.Conv2d(filters[0], out_ch, kernel_size=1)
 
-        #self.res = EfficientNet.from_pretrained('efficientnet-b7')
-        #self.frontend = nn.Sequential(
-        #   self.res._conv_stem, self.res._bn0, self.res._swish
-        #)
-        self.dense = models.DenseNet()
+        self.res = EfficientNet.from_pretrained('efficientnet-b7')
+        self.frontend = nn.Sequential(
+           self.res._conv_stem, self.res._bn0, self.res._swish
+        )
+        #self.dense = models.DenseNet()
 
     def forward(self, x):
-        x = self.dense.features(x)
+        #x = self.dense.features(x)
+        x = self.frontend(x)
 
-        #for idx in range(18):            
-        #    drop_connect_rate = self.res._global_params.drop_connect_rate
-        #   if drop_connect_rate:
-        #       drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
-        #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
+        for idx in range(18):            
+            drop_connect_rate = self.res._global_params.drop_connect_rate
+           if drop_connect_rate:
+               drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
+           x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
 
         x0_0 = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
