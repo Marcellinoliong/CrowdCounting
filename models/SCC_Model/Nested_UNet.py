@@ -15,14 +15,6 @@ class conv_block_nested(nn.Module):
         self.conv2 = nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1, bias=True)
         self.bn2 = nn.BatchNorm2d(out_ch)
 
-        #self.seq = nn.Sequential(nn.Conv2d(in_ch, mid_ch, 3, same_padding=True, NL='relu'),
-                                     #nn.Conv2d(mid_ch, out_ch, 3, same_padding=True, NL='relu'))
-        #self.convOut = nn.Sequential(nn.Conv2d(in_ch, mid_ch, kernel_size=1),nn.ReLU())
-        #self.convDU = convDU(in_out_channels=out_ch,kernel_size=(1,9))
-        #self.convLR = convLR(in_out_channels=out_ch,kernel_size=(9,1))
-
-        #self.output_layer = nn.Sequential(nn.Conv2d(64, 1, kernel_size=1),nn.ReLU())
-
     def forward(self, x):
         x = self.conv1(x)
         x = self.bn1(x)
@@ -32,23 +24,17 @@ class conv_block_nested(nn.Module):
         x = self.bn2(x)
         output = self.activation(x)
 
-        #output= self.seq(x)
-
-        #x = self.convOut(x)
-        #x = self.convDU(x)
-        #x = self.convLR(x)
-
-        #x = self.output_layer(x)
-
         return output
 
 class Nested_UNet(nn.Module):
 
-    def __init__(self, in_ch=3, out_ch=1,  pretrained=True):
+    def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=True):
         super(Nested_UNet, self).__init__()
 
         n1 = 64
         filters = [n1, n1 * 2, n1 * 4, n1 * 8, n1 * 16]
+
+        self.deep_supervision = deep_supervision
 
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         #self.Up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
@@ -80,17 +66,8 @@ class Nested_UNet(nn.Module):
         self.frontend = nn.Sequential(
            self.res._conv_stem, self.res._bn0, self.res._swish
         )
-        #self.dense = models.DenseNet()
 
     def forward(self, x):
-        #x = self.dense.features(x)
-        #x = self.frontend(x)
-        #for idx in range(18):            
-        #   drop_connect_rate = self.res._global_params.drop_connect_rate
-        #   if drop_connect_rate:
-        #      drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
-        #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
-
 
         #x0_0  = self.conv0_0(x)
         x0_0  = self.frontend(x)
@@ -112,5 +89,13 @@ class Nested_UNet(nn.Module):
         x1_3 = self.conv1_3(torch.cat([x1_0, x1_1, x1_2, F.interpolate(x2_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_4 = self.conv0_4(torch.cat([x0_0, x0_1, x0_2, x0_3, F.interpolate(x1_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        output = self.final(x0_4)
-        return output
+        if self.deep_supervision:
+            output1 = self.final1(x0_1)
+            output2 = self.final2(x0_2)
+            output3 = self.final3(x0_3)
+            output4 = self.final4(x0_4)
+            return [output1, output2, output3, output4]
+
+        else:
+            output = self.final(x0_4)
+            return output
