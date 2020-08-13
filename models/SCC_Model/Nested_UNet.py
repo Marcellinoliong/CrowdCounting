@@ -14,8 +14,8 @@ class conv_block_nested(nn.Module):
         #self.conv2 = nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1, bias=True)
         #self.bn2 = nn.BatchNorm2d(out_ch)
 
-        self.seq = nn.Sequential(Conv2d(in_ch, mid_ch, 3, same_padding=True, NL='relu'),
-                                     Conv2d(mid_ch, out_ch, 3, same_padding=True, NL='relu'))
+        self.seq = nn.Sequential(nn.Conv2d(in_ch, mid_ch, 3, same_padding=True, NL='relu'),
+                                     nn.Conv2d(mid_ch, out_ch, 3, same_padding=True, NL='relu'))
 
     def forward(self, x):
         #x = self.conv1(x)
