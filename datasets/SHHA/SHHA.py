@@ -18,7 +18,7 @@ class SHHA(data.Dataset):
         self.data_files = [filename for filename in os.listdir(self.img_path) \
                            if os.path.isfile(os.path.join(self.img_path,filename))]
         self.num_samples = len(self.data_files) 
-        self.main_transform=main_transform  
+        self.main_transform = main_transform  
         self.img_transform = img_transform
         self.gt_transform = gt_transform     
     
