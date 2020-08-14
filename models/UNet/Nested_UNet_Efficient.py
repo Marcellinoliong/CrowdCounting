@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from torchvision import models
 import torch.nn.functional as F
 from efficientnet_pytorch import EfficientNet
 #from misc.layer import convDU, convLR
@@ -131,3 +130,18 @@ class Nested_UNet_Efficient(nn.Module):
         else:
             output = self.final(x0_4)
             return output
+            
+if __name__ == '__main__':
+    import time
+
+    x = torch.rand((1, 3, 256, 256))
+    lnet = Nested_UNet_Efficient(3, 1, 'test')
+    # calculate model size
+    print('    Total params: %.2fMB' % (sum(p.numel() for p in lnet.parameters()) / (1024.0 * 1024) * 4))
+    t1 = time.time()
+    ##test for its speed on cpu
+    for i in range(60):
+        y0 = lnet(x)
+    t2 = time.time()
+    print('fps: ', 60 / (t2 - t1))
+    print(y0.shape)

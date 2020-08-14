@@ -34,6 +34,8 @@ class Nested_UNet(nn.Module):
 
         self.deep_supervision = deep_supervision
 
+        self.activation = nn.ReLU(inplace=True)
+
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         #self.Up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
 
