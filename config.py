@@ -62,7 +62,7 @@ __C.EXP_PATH = './exp' # the path of logs, checkpoints, and current codes
 
 
 #------------------------------VAL------------------------
-__C.VAL_DENSE_START = 50
+__C.VAL_DENSE_START = 5
 __C.VAL_FREQ = 5 # Before __C.VAL_DENSE_START epoches, the freq is set as __C.VAL_FREQ
 
 #------------------------------VIS------------------------

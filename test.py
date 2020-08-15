@@ -18,7 +18,7 @@ from PIL import Image, ImageOps
 torch.cuda.set_device(0)
 torch.backends.cudnn.benchmark = True
 
-exp_name = '../SHHB_results'
+exp_name = 'D:/CrowdCounting/SHHB_results'
 if not os.path.exists(exp_name):
     os.mkdir(exp_name)
 
@@ -39,9 +39,9 @@ restore = standard_transforms.Compose([
     ])
 pil_to_tensor = standard_transforms.ToTensor()
 
-dataRoot = '../ProcessedData/shanghaitech_part_B/test'
+dataRoot = 'D:/CrowdCounting/datasets/ProcessedData/shanghaitech_part_B/test'
 
-model_path = 'D:/From Binus Server/SHHB efficient no deep_supervision/latest_state.pth'
+model_path = 'D:/From Binus Server/SHHB efficient no deep_supervision/all_ep_31_mae_13.4_mse_19.9.pth'
 
 def main():
     
