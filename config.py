@@ -50,7 +50,7 @@ now = time.strftime("%m-%d_%H-%M", time.localtime())
 
 __C.EXP_NAME = now \
 			 + '_' + __C.DATASET \
-			  + '_EfficientNetDS'
+			  + '_NoEfficientNetDS'
 
 if __C.DATASET == 'UCF50':
 	__C.EXP_NAME += '_' + str(__C.VAL_INDEX)	
