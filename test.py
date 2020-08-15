@@ -41,7 +41,7 @@ pil_to_tensor = standard_transforms.ToTensor()
 
 dataRoot = '../ProcessedData/shanghaitech_part_B/test'
 
-model_path = 'xxx.pth'
+model_path = 'D:/From Binus Server/SHHB efficient no deep_supervision/latest_state.pth'
 
 def main():
     
@@ -64,7 +64,7 @@ def test(file_list, model_path):
     preds = []
 
     for filename in file_list:
-    	print( filename )
+        print( filename )
         imgname = dataRoot + '/img/' + filename
         filename_no_ext = filename.split('.')[0]
 
