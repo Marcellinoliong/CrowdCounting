@@ -101,7 +101,7 @@ class Trainer():
                 self.timer['iter time'].toc(average=False)
                 print( '[ep %d][it %d][loss %.4f][lr %.4f][%.2fs]' % \
                         (self.epoch + 1, i + 1, loss.item(), self.optimizer.param_groups[0]['lr']*10000, self.timer['iter time'].diff) )
-                print( '        [cnt: gt: %.1f pred: %.2f diff: %.3f]' % (gt_map[0].sum().data/self.cfg_data.LOG_PARA, pred_map[0].sum().data/self.cfg_data.LOG_PARA, abs((gt_map[0].sum().data/self.cfg_data.LOG_PARA)-(pred_map[0].sum().data/self.cfg_data.LOG_PARA))) )           
+                print( '        [cnt: gt: %.1f pred: %.2f different: %.2f]' % (gt_map[0].sum().data/self.cfg_data.LOG_PARA, pred_map[0].sum().data/self.cfg_data.LOG_PARA, abs((gt_map[0].sum().data/self.cfg_data.LOG_PARA)-(pred_map[0].sum().data/self.cfg_data.LOG_PARA))) )           
 
 
     def validate_V1(self):# validate_V1 for SHHA, SHHB, UCF-QNRF, UCF50
