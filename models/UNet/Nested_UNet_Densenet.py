@@ -41,7 +41,7 @@ class conv_block_nested(nn.Module):
 
         return output
 
-class Nested_UNet_Efficient(nn.Module):
+class Nested_UNet_Densenet(nn.Module):
 
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
         super(Nested_UNet_Efficient, self).__init__()
@@ -83,16 +83,16 @@ class Nested_UNet_Efficient(nn.Module):
         else:
             self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
-        self.res = EfficientNet.from_pretrained('efficientnet-b7')
-        self.res.in_channels = 64
-        self.frontend = nn.Sequential(
-           self.res._conv_stem, self.res._bn0, self.res._swish
-        )
-        #self.dense = models.DenseNet()
+        #self.res = EfficientNet.from_pretrained('efficientnet-b7')
+        #self.res.in_channels = 64
+        #self.frontend = nn.Sequential(
+        #   self.res._conv_stem, self.res._bn0, self.res._swish
+        #)
+        self.dense = models.DenseNet()
 
     def forward(self, x):
         #x = self.dense.features(x)
-        x = self.frontend(x)
+        #x = self.frontend(x)
         #for idx in range(18):            
         #   drop_connect_rate = self.res._global_params.drop_connect_rate
         #   if drop_connect_rate:
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     import time
 
     x = torch.rand((1, 3, 256, 256))
-    lnet = Nested_UNet_Efficient(3, 1, 'test')
+    lnet = Nested_UNet_Densenet(3, 1, 'test')
     # calculate model size
     print('    Total params: %.2fMB' % (sum(p.numel() for p in lnet.parameters()) / (1024.0 * 1024) * 4))
     t1 = time.time()
