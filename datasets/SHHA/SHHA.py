@@ -18,7 +18,7 @@ class SHHA(data.Dataset):
         self.data_files = [filename for filename in os.listdir(self.img_path) \
                            if os.path.isfile(os.path.join(self.img_path,filename))]
         self.num_samples = len(self.data_files) 
-        self.main_transform = main_transform  
+        self.main_transform=main_transform  
         self.img_transform = img_transform
         self.gt_transform = gt_transform     
     
@@ -37,7 +37,7 @@ class SHHA(data.Dataset):
         return self.num_samples
 
     def read_image_and_gt(self,fname):
-        img = Image.open(os.path.join(self.img_path,fname)).convert('RGB')
+        img = Image.open(os.path.join(self.img_path,fname))
         if img.mode == 'L':
             img = img.convert('RGB')
 
@@ -50,6 +50,4 @@ class SHHA(data.Dataset):
         return img, den    
 
     def get_num_samples(self):
-        return self.num_samples       
-            
-        
+        return self.num_samples    

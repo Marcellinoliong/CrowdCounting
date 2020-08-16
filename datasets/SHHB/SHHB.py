@@ -50,6 +50,4 @@ class SHHB(data.Dataset):
         return img, den    
 
     def get_num_samples(self):
-        return self.num_samples       
-            
-        
+        return self.num_samples    
