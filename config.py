@@ -39,7 +39,7 @@ __C.LAMBDA_1 = 1e-3
 
 
 # print 
-__C.PRINT_FREQ = 20
+__C.PRINT_FREQ = 1
 
 now = time.strftime("%m-%d_%H-%M", time.localtime())
 
@@ -50,7 +50,7 @@ now = time.strftime("%m-%d_%H-%M", time.localtime())
 
 __C.EXP_NAME = now \
 			 + '_' + __C.DATASET \
-			  + '_NoEfficientNetDS'
+			  + '_EfficientNetDS'
 
 if __C.DATASET == 'UCF50':
 	__C.EXP_NAME += '_' + str(__C.VAL_INDEX)	
