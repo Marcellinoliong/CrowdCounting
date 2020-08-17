@@ -85,7 +85,8 @@ class Nested_UNet_Efficient(nn.Module):
 
         self.res = EfficientNet.from_pretrained('efficientnet-b8', advprop=True)
         
-        self._conv_stem = self.res.Conv2d(filters[0], filters[0], kernel_size=3, bias=False)
+        Conv2d = self.res.get_same_padding_conv2d(image_size=image_size)
+        self._conv_stem = Conv2d(filters[0], filters[0], kernel_size=3, bias=False)
         self._bn0 = nn.BatchNorm2d(num_features=filters[0], momentum=self.res.bn_mom, eps=self.res.bn_eps)
 
         
