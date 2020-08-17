@@ -86,7 +86,7 @@ class Nested_UNet_Efficient(nn.Module):
         self.res = EfficientNet.from_pretrained('efficientnet-b8', advprop=True)
         self.res.in_channels = 64
         self.frontend = nn.Sequential(
-           self.res._conv_stem, self.res._bn0, self.res._swish
+           self.res._conv_stem, self.res._bn0, self.res._conv_head, self.res._bn1 , self.res._swish
         )
         #self.dense = models.DenseNet()
 
