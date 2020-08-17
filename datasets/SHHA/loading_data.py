@@ -82,6 +82,22 @@ def SHHA_collate(batch):
 
     raise TypeError((error_msg.format(type(batch[0]))))
 
+def collate_fn_padd(batch):
+    '''
+    Padds batch of variable length
+
+    note: it converts things ToTensor manually here since the ToTensor transform
+    assume it takes in images rather than arbitrary tensors.
+    '''
+    ## get sequence lengths
+    lengths = torch.tensor([ t.shape[0] for t in batch ]).to(device)
+    ## padd
+    batch = [ torch.Tensor(t).to(device) for t in batch ]
+    batch = torch.nn.utils.rnn.pad_sequence(batch)
+    ## compute mask
+    mask = (batch != 0).to(device)
+    return batch, lengths, mask
+
 
 def loading_data():
     mean_std = cfg_data.MEAN_STD
@@ -109,7 +125,7 @@ def loading_data():
     if cfg_data.TRAIN_BATCH_SIZE==1:
         train_loader = DataLoader(train_set, batch_size=1, num_workers=0, shuffle=True, drop_last=True)
     elif cfg_data.TRAIN_BATCH_SIZE>1:
-        train_loader = DataLoader(train_set, batch_size=cfg_data.TRAIN_BATCH_SIZE, num_workers=0, collate_fn=SHHA_collate, shuffle=True, drop_last=True)
+        train_loader = DataLoader(train_set, batch_size=cfg_data.TRAIN_BATCH_SIZE, num_workers=0, collate_fn=collate_fn_padd, shuffle=True, drop_last=True)
     
     
 
