@@ -46,7 +46,7 @@ class Nested_UNet_Efficient(nn.Module):
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
         super(Nested_UNet_Efficient, self).__init__()
 
-        n1 = 64
+        n1 = 72
         filters = [n1, n1 * 2, n1 * 4, n1 * 8, n1 * 16]
 
         self.deep_supervision = deep_supervision
@@ -84,7 +84,7 @@ class Nested_UNet_Efficient(nn.Module):
             self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
         self.res = EfficientNet.from_pretrained('efficientnet-b8', advprop=True)
-        self.res.in_channels = 64
+        self.res.in_channels = 72
         self.frontend = nn.Sequential(
            self.res._conv_stem, self.res._bn0, self.res._swish
         )
