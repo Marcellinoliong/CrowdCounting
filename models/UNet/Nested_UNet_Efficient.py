@@ -84,15 +84,11 @@ class Nested_UNet_Efficient(nn.Module):
             self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
         self.res = EfficientNet.from_pretrained('efficientnet-b8', advprop=True)
-        
-        Conv2d = self.res.get_same_padding_conv2d(image_size=image_size)
-        self._conv_stem = Conv2d(filters[0], filters[0], kernel_size=3, bias=False)
-        self._bn0 = nn.BatchNorm2d(num_features=filters[0], momentum=self.res.bn_mom, eps=self.res.bn_eps)
-
-        
+        self.res.in_channels = 64
         self.frontend = nn.Sequential(
-           self._conv_stem, self._bn0, self.res._swish
+           self.res._conv_stem, self.res._bn0, self.res._swish
         )
+        #self.dense = models.DenseNet()
 
     def forward(self, x):
         #x = self.dense.features(x)
