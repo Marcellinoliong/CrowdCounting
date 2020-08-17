@@ -39,7 +39,7 @@ __C.LAMBDA_1 = 1e-3
 
 
 # print 
-__C.PRINT_FREQ = 1
+__C.PRINT_FREQ = 4
 
 now = time.strftime("%m-%d_%H-%M", time.localtime())
 
