@@ -83,26 +83,26 @@ def test(file_list, model_path):
         _,ts_hd,ts_wd = img.shape
         dst_size = [256,512]
 
-        x1 = random.randint(0, ts_wd - dst_size[1])
-        y1 = random.randint(0, ts_hd - dst_size[0])
-        x2 = x1 + dst_size[1]
-        y2 = y1 + dst_size[0]
+        gt = 0
+        imgp = img
+        denp = den
+        while gt == 0 :
+            x1 = random.randint(0, ts_wd - dst_size[1])
+            y1 = random.randint(0, ts_hd - dst_size[0])
+            x2 = x1 + dst_size[1]
+            y2 = y1 + dst_size[0]
 
-        label_x1 = x1
-        label_y1 = y1
-        label_x2 = x2
-        label_y2 = y2
+            imgp = imgp[:,y1:y2,x1:x2]
+            denp = denp[y1:y2,x1:x2]
 
-        img = img[:,y1:y2,x1:x2]
-        den = den[label_y1:label_y2,label_x1:label_x2]
+            gt = np.sum(denp)
 
-        gt = np.sum(den)
         with torch.no_grad():
-            img = Variable(img[None,:,:,:]).cuda()
-            pred_map = net.test_forward(img)
+            imgp = Variable(imgp[None,:,:,:]).cuda()
+            pred_map = net.test_forward(imgp)
 
         sio.savemat(exp_name+'/pred/'+filename_no_ext+'.mat',{'data':pred_map.squeeze().cpu().numpy()/100.})
-        sio.savemat(exp_name+'/gt/'+filename_no_ext+'.mat',{'data':den})
+        sio.savemat(exp_name+'/gt/'+filename_no_ext+'.mat',{'data':denp})
 
         pred_map = pred_map.cpu().data.numpy()[0,0,:,:]
 
@@ -110,11 +110,11 @@ def test(file_list, model_path):
         pred = np.sum(pred_map)/100.0
         pred_map = pred_map/np.max(pred_map+1e-20)
         
-        den = den/np.max(den+1e-20)
+        denp = denp/np.max(denp+1e-20)
 
         
         den_frame = plt.gca()
-        plt.imshow(den, 'jet')
+        plt.imshow(denp, 'jet')
         den_frame.axes.get_yaxis().set_visible(False)
         den_frame.axes.get_xaxis().set_visible(False)
         den_frame.spines['top'].set_visible(False) 
@@ -143,7 +143,7 @@ def test(file_list, model_path):
 
         # sio.savemat(exp_name+'/'+filename_no_ext+'_pred_'+str(float(pred))+'.mat',{'data':pred_map})
 
-        diff = den-pred_map
+        diff = denp-pred_map
 
         diff_frame = plt.gca()
         plt.imshow(diff, 'jet')
