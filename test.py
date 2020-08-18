@@ -92,8 +92,8 @@ def test(file_list, model_path):
             x2 = x1 + dst_size[1]
             y2 = y1 + dst_size[0]
 
-            imgp = imgp[:,y1:y2,x1:x2]
-            denp = denp[y1:y2,x1:x2]
+            imgp = img[:,y1:y2,x1:x2]
+            denp = den[y1:y2,x1:x2]
 
             gt = np.sum(denp)
             print( filename +'gt:'+ str(int(gt)))
