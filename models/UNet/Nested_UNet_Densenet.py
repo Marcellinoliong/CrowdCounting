@@ -1,26 +1,19 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from efficientnet_pytorch import EfficientNet
-#from misc.layer import convDU, convLR
+from torchvision import models
+
+#model_path = '../PyTorch_Pretrained/resnet50-19c8e357.pth'
 
 class conv_block_nested(nn.Module):
 
     def __init__(self, in_ch, mid_ch, out_ch):
         super(conv_block_nested, self).__init__()
         self.activation = nn.ReLU(inplace=True)
-        self.conv1 = nn.Conv2d(in_ch, mid_ch, kernel_size=3, padding=1, bias=True)
+        self.conv1 = nn.Conv2d(in_ch, mid_ch, kernel_size=3, padding=1, stride=1, bias=True)
         self.bn1 = nn.BatchNorm2d(mid_ch)
-        self.conv2 = nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1, bias=True)
+        self.conv2 = nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1, stride=1, bias=True)
         self.bn2 = nn.BatchNorm2d(out_ch)
-
-        #self.seq = nn.Sequential(nn.Conv2d(in_ch, mid_ch, 3, same_padding=True, NL='relu'),
-                                     #nn.Conv2d(mid_ch, out_ch, 3, same_padding=True, NL='relu'))
-        #self.convOut = nn.Sequential(nn.Conv2d(in_ch, mid_ch, kernel_size=1),nn.ReLU())
-        #self.convDU = convDU(in_out_channels=out_ch,kernel_size=(1,9))
-        #self.convLR = convLR(in_out_channels=out_ch,kernel_size=(9,1))
-
-        #self.output_layer = nn.Sequential(nn.Conv2d(64, 1, kernel_size=1),nn.ReLU())
 
     def forward(self, x):
         x = self.conv1(x)
@@ -31,20 +24,12 @@ class conv_block_nested(nn.Module):
         x = self.bn2(x)
         output = self.activation(x)
 
-        #output= self.seq(x)
-
-        #x = self.convOut(x)
-        #x = self.convDU(x)
-        #x = self.convLR(x)
-
-        #x = self.output_layer(x)
-
         return output
 
 class Nested_UNet_Densenet(nn.Module):
 
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
-        super(Nested_UNet_Efficient, self).__init__()
+        super(Nested_UNet_Densenet, self).__init__()
 
         n1 = 64
         filters = [n1, n1 * 2, n1 * 4, n1 * 8, n1 * 16]
@@ -83,25 +68,24 @@ class Nested_UNet_Densenet(nn.Module):
         else:
             self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
-        #self.res = EfficientNet.from_pretrained('efficientnet-b7')
-        #self.res.in_channels = 64
-        #self.frontend = nn.Sequential(
-        #   self.res._conv_stem, self.res._bn0, self.res._swish
-        #)
-        self.dense = models.DenseNet()
+        #self.dense = models.densenet161(pretrained=True)
+
+        res = models.resnet50(pretrained=True)
+        #pre_wts = torch.load(model_path)
+        #res.load_state_dict(pre_wts)
+        res.inplanes = 256
+        self.frontend = nn.Sequential(
+            res.conv1, res.bn1, res.relu, res.maxpool#, res.layer1, res.layer2
+        )
 
     def forward(self, x):
         #x = self.dense.features(x)
-        #x = self.frontend(x)
-        #for idx in range(18):            
-        #   drop_connect_rate = self.res._global_params.drop_connect_rate
-        #   if drop_connect_rate:
-        #      drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
-        #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
-
-
+        x0 = self.frontend(x)
+        
         #x0_0  = self.frontend(x)
-        x0_0  = self.conv0_0(x)
+        x0 = F.interpolate(x0, scale_factor=2, mode='bilinear', align_corners=True)
+        x0 = F.interpolate(x0, scale_factor=2, mode='bilinear', align_corners=True)
+        x0_0  = self.conv0_0(x0)
         x1_0 = self.conv1_0(self.pool(x0_0))
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
