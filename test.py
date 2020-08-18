@@ -18,7 +18,7 @@ from PIL import Image, ImageOps
 torch.cuda.set_device(0)
 torch.backends.cudnn.benchmark = True
 
-exp_name = 'D:/CrowdCounting/SHHB_results'
+exp_name = 'SHHB_results'
 if not os.path.exists(exp_name):
     os.mkdir(exp_name)
 
@@ -39,16 +39,35 @@ restore = standard_transforms.Compose([
     ])
 pil_to_tensor = standard_transforms.ToTensor()
 
-dataRoot = 'D:/CrowdCounting/datasets/ProcessedData/shanghaitech_part_B/test'
+dataRoot = 'datasets/ProcessedData/shanghaitech_part_B/test'
 
-model_path = 'D:/From Binus Server/SHHB efficient no deep_supervision/all_ep_31_mae_13.4_mse_19.9.pth'
+model_path = '../all_ep_41_mae_36.5_mse_63.2.pth'
 
 def main():
     
     file_list = [filename for root,dirs,filename in os.walk(dataRoot+'/img/')]                                           
 
     test(file_list[0], model_path)
-   
+
+def random_crop(img,den):
+    # dst_size: ht, wd
+
+    _,ts_hd,ts_wd = img.shape
+
+    # print img.shape
+    # print den.shape
+
+    x1 = random.randint(0, ts_wd - dst_size[1])//cfg_data.LABEL_FACTOR*cfg_data.LABEL_FACTOR
+    y1 = random.randint(0, ts_hd - dst_size[0])//cfg_data.LABEL_FACTOR*cfg_data.LABEL_FACTOR
+    x2 = x1 + dst_size[1]
+    y2 = y1 + dst_size[0]
+
+    label_x1 = x1//cfg_data.LABEL_FACTOR
+    label_y1 = y1//cfg_data.LABEL_FACTOR
+    label_x2 = x2//cfg_data.LABEL_FACTOR
+    label_y2 = y2//cfg_data.LABEL_FACTOR
+
+    return img[:,y1:y2,x1:x2], den[label_y1:label_y2,label_x1:label_x2]
 
 def test(file_list, model_path):
 
@@ -64,6 +83,19 @@ def test(file_list, model_path):
     preds = []
 
     for filename in file_list:
+
+        dst_size = [256,512]
+
+        x1 = random.randint(0, ts_wd - dst_size[1])//cfg_data.LABEL_FACTOR*cfg_data.LABEL_FACTOR
+        y1 = random.randint(0, ts_hd - dst_size[0])//cfg_data.LABEL_FACTOR*cfg_data.LABEL_FACTOR
+        x2 = x1 + dst_size[1]
+        y2 = y1 + dst_size[0]
+
+        label_x1 = x1//cfg_data.LABEL_FACTOR
+        label_y1 = y1//cfg_data.LABEL_FACTOR
+        label_x2 = x2//cfg_data.LABEL_FACTOR
+        label_y2 = y2//cfg_data.LABEL_FACTOR
+
         print( filename )
         imgname = dataRoot + '/img/' + filename
         filename_no_ext = filename.split('.')[0]
@@ -80,6 +112,9 @@ def test(file_list, model_path):
 
 
         img = img_transform(img)
+
+        img = img[:,y1:y2,x1:x2]
+        den = den[label_y1:label_y2,label_x1:label_x2]
 
         gt = np.sum(den)
         with torch.no_grad():
