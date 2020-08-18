@@ -84,8 +84,8 @@ def test(file_list, model_path):
         dst_size = [256,512]
 
         gt = 0
-        imgp = copy.deepcopy(img)
-        denp = copy.deepcopy(den)
+        imgp = img
+        denp = den
         while gt == 0 :
             x1 = random.randint(0, ts_wd - dst_size[1])
             y1 = random.randint(0, ts_hd - dst_size[0])
@@ -112,11 +112,11 @@ def test(file_list, model_path):
         pred = np.sum(pred_map)/100.0
         pred_map = pred_map/np.max(pred_map+1e-20)
         
-        den = den/np.max(den+1e-20)
+        denp = denp/np.max(den+1e-20)
 
         
         den_frame = plt.gca()
-        plt.imshow(den, 'jet')
+        plt.imshow(denp, 'jet')
         den_frame.axes.get_yaxis().set_visible(False)
         den_frame.axes.get_xaxis().set_visible(False)
         den_frame.spines['top'].set_visible(False) 
@@ -145,7 +145,7 @@ def test(file_list, model_path):
 
         # sio.savemat(exp_name+'/'+filename_no_ext+'_pred_'+str(float(pred))+'.mat',{'data':pred_map})
 
-        diff = den-pred_map
+        diff = denp-pred_map
 
         diff_frame = plt.gca()
         plt.imshow(diff, 'jet')
