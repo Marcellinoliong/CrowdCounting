@@ -112,7 +112,7 @@ def test(file_list, model_path):
         pred = np.sum(pred_map)/100.0
         pred_map = pred_map/np.max(pred_map+1e-20)
         
-        denp = denp/np.max(den+1e-20)
+        denp = denp/np.max(denp+1e-20)
 
         
         den_frame = plt.gca()
