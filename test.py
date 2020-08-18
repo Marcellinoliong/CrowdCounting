@@ -62,6 +62,9 @@ def test(file_list, model_path):
     gts = []
     preds = []
 
+    difftotal = 0
+    difftotalsqr = 0
+
     for filename in file_list:
         print( filename )
         imgname = dataRoot + '/img/' + filename
@@ -142,6 +145,9 @@ def test(file_list, model_path):
 
         plt.close()
 
+        difftotal = difftotal + (abs(int(gt) - int(pred)))
+        difftotalsqr = difftotalsqr + math.pow(int(gt) - int(pred))
+
         # sio.savemat(exp_name+'/'+filename_no_ext+'_pred_'+str(float(pred))+'.mat',{'data':pred_map})
 
         diff = denp-pred_map
@@ -161,6 +167,8 @@ def test(file_list, model_path):
         plt.close()
 
         # sio.savemat(exp_name+'/'+filename_no_ext+'_diff.mat',{'data':diff})
+    print('MAE : '+str(float(difftotal)/182))
+    print('MSE : '+str(math.sqrt(difftotalsqr)))
                      
 
 
