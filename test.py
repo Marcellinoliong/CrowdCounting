@@ -91,14 +91,9 @@ def test(file_list, model_path):
             y1 = random.randint(0, ts_hd - dst_size[0])
             x2 = x1 + dst_size[1]
             y2 = y1 + dst_size[0]
-
-            label_x1 = x1
-            label_y1 = y1
-            label_x2 = x2
-            label_y2 = y2
-
+            
             imgp = img[:,y1:y2,x1:x2]
-            denp = den[label_y1:label_y2,label_x1:label_x2]
+            denp = den[y1:y2,x1:x2]
 
             gt = np.sum(denp)
 
