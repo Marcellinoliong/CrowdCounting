@@ -69,31 +69,31 @@ def test(file_list, model_path):
 
         denname = dataRoot + '/den/' + filename_no_ext + '.csv'
 
-        den = pd.read_csv(denname, sep=',',header=None).values
-        den = den.astype(np.float32, copy=False)
+        denp = pd.read_csv(denname, sep=',',header=None).values
+        denp = denp.astype(np.float32, copy=False)
 
-        img = Image.open(imgname)
+        imgp = Image.open(imgname)
 
-        if img.mode == 'L':
-            img = img.convert('RGB')
+        if imgp.mode == 'L':
+            imgp = imgp.convert('RGB')
 
 
-        img = img_transform(img)
+        imgp = img_transform(imgp)
 
-        _,ts_hd,ts_wd = img.shape
+        _,ts_hd,ts_wd = imgp.shape
         dst_size = [256,512]
 
         gt = 0
-        imgp = img
-        denp = den
+        #imgp = img
+        #denp = den
         #while gt == 0 :
         x1 = random.randint(0, ts_wd - dst_size[1])
         y1 = random.randint(0, ts_hd - dst_size[0])
         x2 = x1 + dst_size[1]
         y2 = y1 + dst_size[0]
 
-        imgp = img[:,y1:y2,x1:x2]
-        denp = den[y1:y2,x1:x2]
+        imgp = imgp[:,y1:y2,x1:x2]
+        denp = denp[y1:y2,x1:x2]
 
         gt = np.sum(denp)
 
