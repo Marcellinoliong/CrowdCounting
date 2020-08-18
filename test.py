@@ -96,7 +96,7 @@ def test(file_list, model_path):
             denp = denp[y1:y2,x1:x2]
 
             gt = np.sum(denp)
-            print( filename +'gt:'+ gt)
+            print( filename +'gt:'+ str(int(gt)))
 
         with torch.no_grad():
             imgp = Variable(imgp[None,:,:,:]).cuda()
