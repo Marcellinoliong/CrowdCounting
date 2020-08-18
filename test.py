@@ -86,16 +86,16 @@ def test(file_list, model_path):
         gt = 0
         imgp = img
         denp = den
-        while gt == 0 :
-            x1 = random.randint(0, ts_wd - dst_size[1])
-            y1 = random.randint(0, ts_hd - dst_size[0])
-            x2 = x1 + dst_size[1]
-            y2 = y1 + dst_size[0]
+        #while gt == 0 :
+        x1 = random.randint(0, ts_wd - dst_size[1])
+        y1 = random.randint(0, ts_hd - dst_size[0])
+        x2 = x1 + dst_size[1]
+        y2 = y1 + dst_size[0]
 
-            imgp = img[:,y1:y2,x1:x2]
-            denp = den[y1:y2,x1:x2]
+        imgp = img[:,y1:y2,x1:x2]
+        denp = den[y1:y2,x1:x2]
 
-            gt = np.sum(denp)
+        gt = np.sum(denp)
 
         with torch.no_grad():
             imgp = Variable(imgp[None,:,:,:]).cuda()
