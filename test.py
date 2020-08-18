@@ -83,26 +83,33 @@ def test(file_list, model_path):
         _,ts_hd,ts_wd = img.shape
         dst_size = [256,512]
 
-        x1 = random.randint(0, ts_wd - dst_size[1])
-        y1 = random.randint(0, ts_hd - dst_size[0])
-        x2 = x1 + dst_size[1]
-        y2 = y1 + dst_size[0]
+        gt = 0
+        imgp = img
+        denp = den
+        while gt = 0
+            x1 = random.randint(0, ts_wd - dst_size[1])
+            y1 = random.randint(0, ts_hd - dst_size[0])
+            x2 = x1 + dst_size[1]
+            y2 = y1 + dst_size[0]
 
-        label_x1 = x1
-        label_y1 = y1
-        label_x2 = x2
-        label_y2 = y2
+            label_x1 = x1
+            label_y1 = y1
+            label_x2 = x2
+            label_y2 = y2
 
-        img = img[:,y1:y2,x1:x2]
-        den = den[label_y1:label_y2,label_x1:label_x2]
+            imgp = img[:,y1:y2,x1:x2]
+            denp = den[label_y1:label_y2,label_x1:label_x2]
 
-        gt = np.sum(den)
+            gt = np.sum(denp)
+
         with torch.no_grad():
-            img = Variable(img[None,:,:,:]).cuda()
-            pred_map = net.test_forward(img)
+            img = Variable(imgp[None,:,:,:]).cuda()
+            pred_map = net.test_forward(imgp)
 
-        sio.savemat(exp_name+'/pred/'+filename_no_ext+'.mat',{'data':pred_map.squeeze().cpu().numpy()/100.})
-        sio.savemat(exp_name+'/gt/'+filename_no_ext+'.mat',{'data':den})
+        pred = pred_map.squeeze().cpu().numpy()/100.
+
+        sio.savemat(exp_name+'/pred/'+filename_no_ext+'.mat',{'data':pred})
+        sio.savemat(exp_name+'/gt/'+filename_no_ext+'.mat',{'data':denp})
 
         pred_map = pred_map.cpu().data.numpy()[0,0,:,:]
 
