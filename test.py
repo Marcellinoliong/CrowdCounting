@@ -101,9 +101,7 @@ def test(file_list, model_path):
             imgp = Variable(imgp[None,:,:,:]).cuda()
             pred_map = net.test_forward(imgp)
 
-        pred = pred_map.squeeze().cpu().numpy()/100.
-
-        sio.savemat(exp_name+'/pred/'+filename_no_ext+'.mat',{'data':pred})
+        sio.savemat(exp_name+'/pred/'+filename_no_ext+'.mat',{'data':pred_map.squeeze().cpu().numpy()/100.})
         sio.savemat(exp_name+'/gt/'+filename_no_ext+'.mat',{'data':denp})
 
         pred_map = pred_map.cpu().data.numpy()[0,0,:,:]
