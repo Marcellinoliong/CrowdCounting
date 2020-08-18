@@ -168,7 +168,7 @@ def test(file_list, model_path):
 
         # sio.savemat(exp_name+'/'+filename_no_ext+'_diff.mat',{'data':diff})
     print('MAE : '+str(float(difftotal)/182))
-    print('MSE : '+str(math.sqrt(difftotalsqr)))
+    print('MSE : '+str(math.sqrt(difftotalsqr/182)))
                      
 
 
