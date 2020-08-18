@@ -146,7 +146,7 @@ def test(file_list, model_path):
         plt.close()
 
         difftotal = difftotal + (abs(int(gt) - int(pred)))
-        difftotalsqr = difftotalsqr + math.pow(int(gt) - int(pred))
+        difftotalsqr = difftotalsqr + math.pow(int(gt) - int(pred), 2)
 
         # sio.savemat(exp_name+'/'+filename_no_ext+'_pred_'+str(float(pred))+'.mat',{'data':pred_map})
 
