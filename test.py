@@ -103,7 +103,7 @@ def test(file_list, model_path):
             gt = np.sum(denp)
 
         with torch.no_grad():
-            img = Variable(imgp[None,:,:,:]).cuda()
+            imgp = Variable(imgp[None,:,:,:]).cuda()
             pred_map = net.test_forward(imgp)
 
         pred = pred_map.squeeze().cpu().numpy()/100.
