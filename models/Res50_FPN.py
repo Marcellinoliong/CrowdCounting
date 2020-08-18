@@ -2,14 +2,12 @@ import torch.nn as nn
 import torch
 from torchvision import models
 
-from misc.layer import Conv2d, FC
+from layer import Conv2d, FC
 
 import torch.nn.functional as F
-from misc.utils import *
+from utils import *
 
 import pdb
-
-model_path = '../PyTorch_Pretrained/resnet50-19c8e357.pth'
 
 class Res50_FPN(nn.Module):
     def __init__(self, ):
@@ -73,8 +71,8 @@ class Res50_FPN(nn.Module):
         # initialize_weights(self.modules())
 
         res = models.resnet50()
-        pre_wts = torch.load(model_path)
-        res.load_state_dict(pre_wts)
+        #pre_wts = torch.load(model_path)
+        #res.load_state_dict(pre_wts)
         self.frontend = nn.Sequential(
             res.conv1, res.bn1, res.relu, res.maxpool#, res.layer1, res.layer2
         )
@@ -199,3 +197,17 @@ class Bottleneck(nn.Module):
         out = self.relu(out)
 
         return out        
+if __name__ == '__main__':
+    import time
+
+    x = torch.rand((1, 3, 256, 256))
+    lnet = Res50_FPN()
+    # calculate model size
+    print('    Total params: %.2fMB' % (sum(p.numel() for p in lnet.parameters()) / (1024.0 * 1024) * 4))
+    t1 = time.time()
+    ##test for its speed on cpu
+    for i in range(60):
+        y0 = lnet(x)
+    t2 = time.time()
+    print('fps: ', 60 / (t2 - t1))
+    print(y0.shape)
