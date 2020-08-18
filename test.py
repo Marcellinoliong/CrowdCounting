@@ -97,7 +97,6 @@ def test(file_list, model_path):
         den = den[label_y1:label_y2,label_x1:label_x2]
 
         gt = np.sum(den)
-        
         with torch.no_grad():
             img = Variable(img[None,:,:,:]).cuda()
             pred_map = net.test_forward(img)
