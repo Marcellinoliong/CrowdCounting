@@ -18,7 +18,7 @@ from PIL import Image, ImageOps
 torch.cuda.set_device(0)
 torch.backends.cudnn.benchmark = True
 
-exp_name = 'SHHB_results'
+exp_name = 'SHHA_results'
 if not os.path.exists(exp_name):
     os.mkdir(exp_name)
 
@@ -39,7 +39,7 @@ restore = standard_transforms.Compose([
     ])
 pil_to_tensor = standard_transforms.ToTensor()
 
-dataRoot = 'datasets/ProcessedData/shanghaitech_part_B/test'
+dataRoot = 'datasets/ProcessedData/shanghaitech_part_A/test'
 
 model_path = '../all_ep_41_mae_36.5_mse_63.2.pth'
 
@@ -57,15 +57,15 @@ def random_crop(img,den):
     # print img.shape
     # print den.shape
 
-    x1 = random.randint(0, ts_wd - dst_size[1])//cfg_data.LABEL_FACTOR*cfg_data.LABEL_FACTOR
-    y1 = random.randint(0, ts_hd - dst_size[0])//cfg_data.LABEL_FACTOR*cfg_data.LABEL_FACTOR
+    x1 = random.randint(0, ts_wd - dst_size[1])
+    y1 = random.randint(0, ts_hd - dst_size[0])
     x2 = x1 + dst_size[1]
     y2 = y1 + dst_size[0]
 
-    label_x1 = x1//cfg_data.LABEL_FACTOR
-    label_y1 = y1//cfg_data.LABEL_FACTOR
-    label_x2 = x2//cfg_data.LABEL_FACTOR
-    label_y2 = y2//cfg_data.LABEL_FACTOR
+    label_x1 = x1
+    label_y1 = y1
+    label_x2 = x2
+    label_y2 = y2
 
     return img[:,y1:y2,x1:x2], den[label_y1:label_y2,label_x1:label_x2]
 
