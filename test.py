@@ -100,7 +100,7 @@ def test(file_list, model_path):
             imgp = img
             denp = den
             it = 0
-            while gt < 25:
+            while gt < 25 and it < 10:
                 it = it + 1
                 x1 = random.randint(0, ts_wd - dst_size[1])
                 y1 = random.randint(0, ts_hd - dst_size[0])
@@ -111,8 +111,10 @@ def test(file_list, model_path):
                 denp = den[y1:y2,x1:x2]
 
                 gt = np.sum(denp)
-                if gt < 18 and it > 10:
+                if gt < 20:
                     it = 0
+                else:
+                    it = 10
 
             with torch.no_grad():
                 imgp = Variable(imgp[None,:,:,:]).cuda()
