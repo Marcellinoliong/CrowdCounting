@@ -14,6 +14,7 @@ from config import cfg
 from misc.utils import *
 import scipy.io as sio
 from PIL import Image, ImageOps
+import shutil
 
 torch.cuda.set_device(0)
 torch.backends.cudnn.benchmark = True
@@ -60,7 +61,7 @@ def test(file_list, model_path):
     MSE = 0
     while MAE < 45 :
         if os.path.exists(exp_name):
-            os.removedirs(exp_name)
+            shutil.rmtree(exp_name)
         if not os.path.exists(exp_name):
             os.mkdir(exp_name)
 
