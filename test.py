@@ -33,7 +33,7 @@ pil_to_tensor = standard_transforms.ToTensor()
 
 dataRoot = 'datasets/ProcessedData/shanghaitech_part_A/test'
 
-model_path = '../all_ep_41_mae_36.5_mse_63.2.pth'
+model_path = '../all_ep_197_mae_25.2_mse_46.5.pth'
 
 def main():
     
