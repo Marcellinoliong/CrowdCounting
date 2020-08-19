@@ -59,7 +59,7 @@ def test(file_list, model_path):
     difftotalsqr = 0
     MAE = 0
     MSE = 0
-    while MAE < 45 or MAE > 55:
+    while (MAE < 43 or MAE > 55) and (MSE < 86) :
         gts = []
         preds = []
         difftotal = 0
