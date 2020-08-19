@@ -59,7 +59,7 @@ def test(file_list, model_path):
     difftotalsqr = 0
     MAE = 0
     MSE = 0
-    while MAE < 45 and MAE > 55:
+    while MAE < 45 or MAE > 55:
         if os.path.exists(exp_name):
             shutil.rmtree(exp_name)
         if not os.path.exists(exp_name):
