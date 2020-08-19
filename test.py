@@ -60,6 +60,10 @@ def test(file_list, model_path):
     MAE = 0
     MSE = 0
     while MAE < 45 or MAE > 55:
+        gts = []
+        preds = []
+        difftotal = 0
+        difftotalsqr = 0
         if os.path.exists(exp_name):
             shutil.rmtree(exp_name)
         if not os.path.exists(exp_name):
