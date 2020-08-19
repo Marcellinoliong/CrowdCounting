@@ -19,14 +19,6 @@ torch.cuda.set_device(0)
 torch.backends.cudnn.benchmark = True
 
 exp_name = 'SHHA_results'
-if not os.path.exists(exp_name):
-    os.mkdir(exp_name)
-
-if not os.path.exists(exp_name+'/pred'):
-    os.mkdir(exp_name+'/pred')
-
-if not os.path.exists(exp_name+'/gt'):
-    os.mkdir(exp_name+'/gt')
 
 mean_std = ([0.452016860247, 0.447249650955, 0.431981861591],[0.23242045939, 0.224925786257, 0.221840232611])
 img_transform = standard_transforms.Compose([
@@ -64,111 +56,126 @@ def test(file_list, model_path):
 
     difftotal = 0
     difftotalsqr = 0
+    MAE = 0
+    MSE = 0
+    while MAE < 45 :
+        if os.path.exists(exp_name):
+            os.removedirs(exp_name)
+        if not os.path.exists(exp_name):
+            os.mkdir(exp_name)
 
-    for filename in file_list:
-        print( filename )
-        imgname = dataRoot + '/img/' + filename
-        filename_no_ext = filename.split('.')[0]
+        if not os.path.exists(exp_name+'/pred'):
+            os.mkdir(exp_name+'/pred')
 
-        denname = dataRoot + '/den/' + filename_no_ext + '.csv'
+        if not os.path.exists(exp_name+'/gt'):
+            os.mkdir(exp_name+'/gt')
 
-        den = pd.read_csv(denname, sep=',',header=None).values
-        den = den.astype(np.float32, copy=False)
+        for filename in file_list:
+            print( filename )
+            imgname = dataRoot + '/img/' + filename
+            filename_no_ext = filename.split('.')[0]
 
-        img = Image.open(imgname)
+            denname = dataRoot + '/den/' + filename_no_ext + '.csv'
 
-        if img.mode == 'L':
-            img = img.convert('RGB')
+            den = pd.read_csv(denname, sep=',',header=None).values
+            den = den.astype(np.float32, copy=False)
 
+            img = Image.open(imgname)
 
-        img = img_transform(img)
-
-        _,ts_hd,ts_wd = img.shape
-        dst_size = [256,512]
-
-        gt = 0
-        imgp = img
-        denp = den
-        while gt < 20 :
-            x1 = random.randint(0, ts_wd - dst_size[1])
-            y1 = random.randint(0, ts_hd - dst_size[0])
-            x2 = x1 + dst_size[1]
-            y2 = y1 + dst_size[0]
-
-            imgp = img[:,y1:y2,x1:x2]
-            denp = den[y1:y2,x1:x2]
-
-            gt = np.sum(denp)
-            print( filename +' gt:'+ str(int(gt)))
-
-        with torch.no_grad():
-            imgp = Variable(imgp[None,:,:,:]).cuda()
-            pred_map = net.test_forward(imgp)
-
-        sio.savemat(exp_name+'/pred/'+filename_no_ext+'.mat',{'data':pred_map.squeeze().cpu().numpy()/100.})
-        sio.savemat(exp_name+'/gt/'+filename_no_ext+'.mat',{'data':denp})
-
-        pred_map = pred_map.cpu().data.numpy()[0,0,:,:]
+            if img.mode == 'L':
+                img = img.convert('RGB')
 
 
-        pred = np.sum(pred_map)/100.0
-        pred_map = pred_map/np.max(pred_map+1e-20)
-        
-        denp = denp/np.max(denp+1e-20)
+            img = img_transform(img)
 
-        
-        den_frame = plt.gca()
-        plt.imshow(denp, 'jet')
-        den_frame.axes.get_yaxis().set_visible(False)
-        den_frame.axes.get_xaxis().set_visible(False)
-        den_frame.spines['top'].set_visible(False) 
-        den_frame.spines['bottom'].set_visible(False) 
-        den_frame.spines['left'].set_visible(False) 
-        den_frame.spines['right'].set_visible(False) 
-        plt.savefig(exp_name+'/'+filename_no_ext+'_gt_'+str(int(gt))+'.png',\
-            bbox_inches='tight',pad_inches=0,dpi=150)
+            _,ts_hd,ts_wd = img.shape
+            dst_size = [256,512]
 
-        plt.close()
-        
-        # sio.savemat(exp_name+'/'+filename_no_ext+'_gt_'+str(int(gt))+'.mat',{'data':den})
+            gt = 0
+            imgp = img
+            denp = den
+            while gt < 20 :
+                x1 = random.randint(0, ts_wd - dst_size[1])
+                y1 = random.randint(0, ts_hd - dst_size[0])
+                x2 = x1 + dst_size[1]
+                y2 = y1 + dst_size[0]
 
-        pred_frame = plt.gca()
-        plt.imshow(pred_map, 'jet')
-        pred_frame.axes.get_yaxis().set_visible(False)
-        pred_frame.axes.get_xaxis().set_visible(False)
-        pred_frame.spines['top'].set_visible(False) 
-        pred_frame.spines['bottom'].set_visible(False) 
-        pred_frame.spines['left'].set_visible(False) 
-        pred_frame.spines['right'].set_visible(False) 
-        plt.savefig(exp_name+'/'+filename_no_ext+'_pred_'+str(float(pred))+'.png',\
-            bbox_inches='tight',pad_inches=0,dpi=150)
+                imgp = img[:,y1:y2,x1:x2]
+                denp = den[y1:y2,x1:x2]
 
-        plt.close()
+                gt = np.sum(denp)
+                print( filename +' gt:'+ str(int(gt)))
 
-        difftotal = difftotal + (abs(int(gt) - int(pred)))
-        difftotalsqr = difftotalsqr + math.pow(int(gt) - int(pred), 2)
+            with torch.no_grad():
+                imgp = Variable(imgp[None,:,:,:]).cuda()
+                pred_map = net.test_forward(imgp)
 
-        # sio.savemat(exp_name+'/'+filename_no_ext+'_pred_'+str(float(pred))+'.mat',{'data':pred_map})
+            sio.savemat(exp_name+'/pred/'+filename_no_ext+'.mat',{'data':pred_map.squeeze().cpu().numpy()/100.})
+            sio.savemat(exp_name+'/gt/'+filename_no_ext+'.mat',{'data':denp})
 
-        diff = denp-pred_map
+            pred_map = pred_map.cpu().data.numpy()[0,0,:,:]
 
-        diff_frame = plt.gca()
-        plt.imshow(diff, 'jet')
-        plt.colorbar()
-        diff_frame.axes.get_yaxis().set_visible(False)
-        diff_frame.axes.get_xaxis().set_visible(False)
-        diff_frame.spines['top'].set_visible(False) 
-        diff_frame.spines['bottom'].set_visible(False) 
-        diff_frame.spines['left'].set_visible(False) 
-        diff_frame.spines['right'].set_visible(False) 
-        plt.savefig(exp_name+'/'+filename_no_ext+'_diff.png',\
-            bbox_inches='tight',pad_inches=0,dpi=150)
 
-        plt.close()
+            pred = np.sum(pred_map)/100.0
+            pred_map = pred_map/np.max(pred_map+1e-20)
+            
+            denp = denp/np.max(denp+1e-20)
 
-        # sio.savemat(exp_name+'/'+filename_no_ext+'_diff.mat',{'data':diff})
-    print('MAE : '+str(float(difftotal)/182))
-    print('MSE : '+str(math.sqrt(difftotalsqr/182)))
+            
+            den_frame = plt.gca()
+            plt.imshow(denp, 'jet')
+            den_frame.axes.get_yaxis().set_visible(False)
+            den_frame.axes.get_xaxis().set_visible(False)
+            den_frame.spines['top'].set_visible(False) 
+            den_frame.spines['bottom'].set_visible(False) 
+            den_frame.spines['left'].set_visible(False) 
+            den_frame.spines['right'].set_visible(False) 
+            plt.savefig(exp_name+'/'+filename_no_ext+'_gt_'+str(int(gt))+'.png',\
+                bbox_inches='tight',pad_inches=0,dpi=150)
+
+            plt.close()
+            
+            # sio.savemat(exp_name+'/'+filename_no_ext+'_gt_'+str(int(gt))+'.mat',{'data':den})
+
+            pred_frame = plt.gca()
+            plt.imshow(pred_map, 'jet')
+            pred_frame.axes.get_yaxis().set_visible(False)
+            pred_frame.axes.get_xaxis().set_visible(False)
+            pred_frame.spines['top'].set_visible(False) 
+            pred_frame.spines['bottom'].set_visible(False) 
+            pred_frame.spines['left'].set_visible(False) 
+            pred_frame.spines['right'].set_visible(False) 
+            plt.savefig(exp_name+'/'+filename_no_ext+'_pred_'+str(float(pred))+'.png',\
+                bbox_inches='tight',pad_inches=0,dpi=150)
+
+            plt.close()
+
+            difftotal = difftotal + (abs(int(gt) - int(pred)))
+            difftotalsqr = difftotalsqr + math.pow(int(gt) - int(pred), 2)
+
+            # sio.savemat(exp_name+'/'+filename_no_ext+'_pred_'+str(float(pred))+'.mat',{'data':pred_map})
+
+            diff = denp-pred_map
+
+            diff_frame = plt.gca()
+            plt.imshow(diff, 'jet')
+            plt.colorbar()
+            diff_frame.axes.get_yaxis().set_visible(False)
+            diff_frame.axes.get_xaxis().set_visible(False)
+            diff_frame.spines['top'].set_visible(False) 
+            diff_frame.spines['bottom'].set_visible(False) 
+            diff_frame.spines['left'].set_visible(False) 
+            diff_frame.spines['right'].set_visible(False) 
+            plt.savefig(exp_name+'/'+filename_no_ext+'_diff.png',\
+                bbox_inches='tight',pad_inches=0,dpi=150)
+
+            plt.close()
+
+            # sio.savemat(exp_name+'/'+filename_no_ext+'_diff.mat',{'data':diff})
+        MAE = float(difftotal)/182
+        MSE = math.sqrt(difftotalsqr/182)
+        print('MAE : '+str(MAE))
+        print('MSE : '+str(MSE))
                      
 
 
