@@ -111,10 +111,8 @@ def test(file_list, model_path):
                 denp = den[y1:y2,x1:x2]
 
                 gt = np.sum(denp)
-                if gt < 20:
+                if gt < 20 and it == 10:
                     it = 0
-                else:
-                    it = 10
 
             with torch.no_grad():
                 imgp = Variable(imgp[None,:,:,:]).cuda()
