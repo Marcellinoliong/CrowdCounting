@@ -15,7 +15,7 @@ __C_WE.LABEL_FACTOR = 1
 __C_WE.LOG_PARA = 100.
 
 __C_WE.RESUME_MODEL = ''#model path
-__C_WE.TRAIN_BATCH_SIZE = 12 #imgs
+__C_WE.TRAIN_BATCH_SIZE = 8 #imgs
 
 __C_WE.VAL_BATCH_SIZE = 8 #
 
