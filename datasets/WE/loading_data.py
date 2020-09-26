@@ -28,7 +28,7 @@ def loading_data():
     ])
 
     train_set = WE(cfg_data.DATA_PATH+'/train', 'train',main_transform=train_main_transform, img_transform=img_transform, gt_transform=gt_transform)
-    train_loader = DataLoader(train_set, batch_size=cfg_data.TRAIN_BATCH_SIZE, num_workers=8, shuffle=True, drop_last=True)
+    train_loader = DataLoader(train_set, batch_size=cfg_data.TRAIN_BATCH_SIZE, num_workers=0, shuffle=True, drop_last=True)
 
 
     test_name = cfg_data.VAL_FOLDER 
@@ -37,7 +37,7 @@ def loading_data():
 
     for subname in test_name:
         sub_set = WE(cfg_data.DATA_PATH+'/test/' + subname, 'test', main_transform=val_main_transform, img_transform=img_transform, gt_transform=gt_transform)
-        val_loader.append(DataLoader(sub_set, batch_size=cfg_data.VAL_BATCH_SIZE, num_workers=8, shuffle=True, drop_last=True)) 
+        val_loader.append(DataLoader(sub_set, batch_size=cfg_data.VAL_BATCH_SIZE, num_workers=0, shuffle=True, drop_last=True)) 
 
 
     return train_loader, val_loader, restore_transform
