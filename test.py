@@ -34,7 +34,7 @@ pil_to_tensor = standard_transforms.ToTensor()
 
 dataRoot = 'datasets/ProcessedData/shanghaitech_part_A/test'
 
-model_path = '../all_ep_197_mae_25.2_mse_46.5.pth'
+model_path = 'D:/FromBinusServer/08-18_20-07_SHHA_EfficientNet/all_ep_197_mae_25.2_mse_46.5.pth'
 
 def main():
     
