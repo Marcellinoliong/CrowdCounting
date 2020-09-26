@@ -108,3 +108,7 @@ exp/
 backup_exp/
 
 datasets/ProcessedData
+SHHA_results/1_gt_98.png
+SHHA_results/1_pred_158.70828125.png
+SHHA_results/gt/1.mat
+SHHA_results/pred/1.mat
