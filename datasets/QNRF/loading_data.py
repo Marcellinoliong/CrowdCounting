@@ -95,10 +95,10 @@ def loading_data():
     ])
 
     train_set = QNRF(cfg_data.DATA_PATH+'/train', 'train',main_transform=train_main_transform, img_transform=img_transform, gt_transform=gt_transform)
-    train_loader = DataLoader(train_set, batch_size=cfg_data.TRAIN_BATCH_SIZE, num_workers=8, collate_fn=SHHA_collate, shuffle=True, drop_last=True)
+    train_loader = DataLoader(train_set, batch_size=cfg_data.TRAIN_BATCH_SIZE, num_workers=0, collate_fn=SHHA_collate, shuffle=True, drop_last=True)
     
 
     val_set = QNRF(cfg_data.DATA_PATH+'/test', 'test', main_transform=None, img_transform=img_transform, gt_transform=gt_transform)
-    val_loader = DataLoader(val_set, batch_size=cfg_data.VAL_BATCH_SIZE, num_workers=8, shuffle=True, drop_last=False)
+    val_loader = DataLoader(val_set, batch_size=cfg_data.VAL_BATCH_SIZE, num_workers=0, shuffle=True, drop_last=False)
 
     return train_loader, val_loader, restore_transform
