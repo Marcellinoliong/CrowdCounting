@@ -1,7 +1,7 @@
 import torchvision.transforms as standard_transforms
 from torch.utils.data import DataLoader
 import misc.transforms as own_transforms
-from WE import WE
+from .WE import WE
 from setting import cfg_data 
 import torch
 import random
