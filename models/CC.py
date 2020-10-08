@@ -27,6 +27,8 @@ class CrowdCounter(nn.Module):
             from .UNet.Nested_UNet_Efficient import Nested_UNet_Efficient as net
         elif model_name == 'UNet':
             from .SCC_Model.UNet import UNet as net
+        elif model_name == 'UNet3P':
+            from .SCC_Model.UNet import UNet3Plus as net
 
         self.CCN = net()
         if len(gpus)>1:
