@@ -83,7 +83,7 @@ class Nested_UNet_Efficient(nn.Module):
         else:
             self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
-        self.res = EfficientNet.from_pretrained('efficientnet-b7', advprop=True, in_channels=n1)
+        self.res = EfficientNet.from_pretrained('efficientnet-b7', advprop=True)
         #self.frontend = nn.Sequential(
         #   self.res._conv_stem, self.res._bn0, self.res._swish
         #)
@@ -98,7 +98,7 @@ class Nested_UNet_Efficient(nn.Module):
         #      drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
         #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
 
-        self.res.endpoints = self.res.model.extract_endpoints(inputs)
+        self.res.endpoints = self.res.extract_endpoints(x)
 
 
         #x0_0  = self.frontend(x)
