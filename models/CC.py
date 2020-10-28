@@ -24,7 +24,7 @@ class CrowdCounter(nn.Module):
         elif model_name == 'Res101_SFCN':
             from .SCC_Model.Res101_SFCN import Res101_SFCN as net 
         elif model_name == 'UNet++':
-            from .UNet.Nested_UNet import Nested_UNet as net
+            from .UNet.Nested_UNet_Efficient import Nested_UNet_Efficient as net
         elif model_name == 'UNet':
             from .SCC_Model.UNet import UNet as net
         elif model_name == 'UNet3P':

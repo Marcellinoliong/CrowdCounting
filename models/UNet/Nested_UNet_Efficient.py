@@ -46,7 +46,7 @@ class Nested_UNet_Efficient(nn.Module):
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
         super(Nested_UNet_Efficient, self).__init__()
 
-        n1 = 72
+        n1 = 64
         filters = [n1, n1 * 2, n1 * 4, n1 * 8, n1 * 16]
 
         self.deep_supervision = deep_supervision
@@ -83,21 +83,22 @@ class Nested_UNet_Efficient(nn.Module):
         else:
             self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
-        self.res = EfficientNet.from_pretrained('efficientnet-b8', advprop=True)
-        self.res.in_channels = 72
-        self.frontend = nn.Sequential(
-           self.res._conv_stem, self.res._bn0, self.res._swish
-        )
+        self.res = EfficientNet.from_pretrained('efficientnet-b7', advprop=True, in_channels=n1)
+        #self.frontend = nn.Sequential(
+        #   self.res._conv_stem, self.res._bn0, self.res._swish
+        #)
         #self.dense = models.DenseNet()
 
     def forward(self, x):
         #x = self.dense.features(x)
-        x = self.frontend(x)
+        #x = self.frontend(x)
         #for idx in range(18):            
         #   drop_connect_rate = self.res._global_params.drop_connect_rate
         #   if drop_connect_rate:
         #      drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
         #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
+
+        self.res.endpoints = self.res.model.extract_endpoints(inputs)
 
 
         #x0_0  = self.frontend(x)
@@ -105,7 +106,8 @@ class Nested_UNet_Efficient(nn.Module):
         x1_0 = self.conv1_0(self.pool(x0_0))
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        x2_0 = self.conv2_0(self.pool(x1_0))
+        #x2_0 = self.conv2_0(self.pool(x1_0))
+        x2_0 = self.res.endpoints['reduction_2'].shape
         x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, F.interpolate(x1_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
