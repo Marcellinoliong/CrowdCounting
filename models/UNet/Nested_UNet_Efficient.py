@@ -102,6 +102,7 @@ class Nested_UNet_Efficient(nn.Module):
 
         #layer 1 dan 2
         drop_connect_rate = self.res._global_params.drop_connect_rate
+        print(drop_connect_rate)
         if drop_connect_rate:
             drop_connect_rate *= float(1) / len(self.res._blocks) # scale drop connect_rate
         x_en = self.res._blocks(x_en, drop_connect_rate=drop_connect_rate)
