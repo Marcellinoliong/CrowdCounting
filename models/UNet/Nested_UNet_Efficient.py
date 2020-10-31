@@ -43,7 +43,7 @@ class conv_block_nested(nn.Module):
 
 class Nested_UNet_Efficient(nn.Module):
 
-    def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
+    def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=True):
         super(Nested_UNet_Efficient, self).__init__()
 
         n1 = 16
@@ -113,15 +113,15 @@ class Nested_UNet_Efficient(nn.Module):
         #x0_0  = self.frontend(x)
         x0_0  = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
-        #print(x0_0.size())
-        #print(x1_0.size())
+        print(x0_0.size())
+        print(x1_0.size())
         #print((F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)).size())
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         x2_0 = self.conv2_0(self.pool(x1_0))
         #x2_0 = x_en
-        #print(x1_0.size())
-        #print(x2_0.size())
+        print(x1_0.size())
+        print(x2_0.size())
         x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, F.interpolate(x1_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
