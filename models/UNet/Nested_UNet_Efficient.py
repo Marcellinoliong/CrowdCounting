@@ -98,7 +98,8 @@ class Nested_UNet_Efficient(nn.Module):
         #      drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
         #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
 
-        self.res.endpoints = self.res.extract_endpoints(x)
+        endpoints = dict()
+        endpoints = self.res.extract_endpoints(x)
 
         #x0_0  = self.frontend(x)
         x0_0  = self.conv0_0(x)
@@ -106,18 +107,18 @@ class Nested_UNet_Efficient(nn.Module):
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         #x2_0 = self.conv2_0(self.pool(x1_0))
-        x2_0 = self.res.endpoints['reduction_2'].shape
+        x2_0 = endpoints['reduction_2'].shape
         x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, F.interpolate(x1_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         #x3_0 = self.conv3_0(self.pool(x2_0))
-        x3_0 = self.res.endpoints['reduction_4'].shape
+        x3_0 = endpoints['reduction_4'].shape
         x2_1 = self.conv2_1(torch.cat([x2_0, F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_2 = self.conv1_2(torch.cat([x1_0, x1_1, F.interpolate(x2_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_3 = self.conv0_3(torch.cat([x0_0, x0_1, x0_2, F.interpolate(x1_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         #x4_0 = self.conv4_0(self.pool(x3_0))
-        x4_0 = self.res.endpoints['reduction_6'].shape
+        x4_0 = endpoints['reduction_6'].shape
         x3_1 = self.conv3_1(torch.cat([x3_0, F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x2_2 = self.conv2_2(torch.cat([x2_0, x2_1, F.interpolate(x3_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_3 = self.conv1_3(torch.cat([x1_0, x1_1, x1_2, F.interpolate(x2_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
