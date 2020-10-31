@@ -107,6 +107,7 @@ class Nested_UNet_Efficient(nn.Module):
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         #x2_0 = self.conv2_0(self.pool(x1_0))
+        len(endpoints)
         x2_0 = endpoints['reduction_2'].shape
         x2_0.size()
         x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
