@@ -98,7 +98,7 @@ class Nested_UNet_Efficient(nn.Module):
         #      drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
         #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
 
-        x_en = self.res._swish(self._bn0(self._conv_stem(x)))
+        x_en = self.res._swish(self.res._bn0(self.res._conv_stem(x)))
 
         #layer 1 dan 2
         drop_connect_rate = self.res._global_params.drop_connect_rate
