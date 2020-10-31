@@ -46,7 +46,7 @@ class Nested_UNet_Efficient(nn.Module):
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=True):
         super(Nested_UNet_Efficient, self).__init__()
 
-        n1 = 16
+        n1 = 8
         filters = [n1, n1 * 2, n1 * 4, n1 * 8, n1 * 16]
 
         self.deep_supervision = deep_supervision
