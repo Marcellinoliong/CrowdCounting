@@ -118,11 +118,11 @@ class Nested_UNet_Efficient(nn.Module):
         #print((F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)).size())
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        #x2_0 = self.conv2_0(self.pool(x1_0))
-        x2_0 = x_en
+        x2_0 = self.conv2_0(self.pool(x1_0))
+        #x2_0 = x_en
         #print(x1_0.size())
         #print(x2_0.size())
-        x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=1, mode='bilinear', align_corners=True)], 1))
+        x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, F.interpolate(x1_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         #layer 3 dan 4
@@ -134,8 +134,8 @@ class Nested_UNet_Efficient(nn.Module):
         if drop_connect_rate:
             drop_connect_rate *= float(3) / len(self.res._blocks) # scale drop connect_rate
         x_en = self.res._blocks[3](x_en, drop_connect_rate=drop_connect_rate)
-        #x3_0 = self.conv3_0(self.pool(x2_0))
-        x3_0 = x_en
+        x3_0 = self.conv3_0(self.pool(x2_0))
+        #x3_0 = x_en
         print(x2_0.size())
         print(x3_0.size())
         x2_1 = self.conv2_1(torch.cat([x2_0, F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
@@ -151,8 +151,8 @@ class Nested_UNet_Efficient(nn.Module):
         if drop_connect_rate:
             drop_connect_rate *= float(5) / len(self.res._blocks) # scale drop connect_rate
         x_en = self.res._blocks[5](x_en, drop_connect_rate=drop_connect_rate)
-        #x4_0 = self.conv4_0(self.pool(x3_0))
-        x4_0 = x_en
+        x4_0 = self.conv4_0(self.pool(x3_0))
+        #x4_0 = x_en
         print(x3_0.size())
         print(x4_0.size())
         x3_1 = self.conv3_1(torch.cat([x3_0, F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
