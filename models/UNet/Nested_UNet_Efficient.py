@@ -55,7 +55,7 @@ class Nested_UNet_Efficient(nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         #self.Up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
 
-        self.conv0_0 = conv_block_nested(filters[0], filters[0], filters[0])
+        self.conv0_0 = conv_block_nested(in_ch, filters[0], filters[0])
         self.conv1_0 = conv_block_nested(filters[0], filters[1], filters[1])
         self.conv2_0 = conv_block_nested(filters[1], filters[2], filters[2])
         self.conv3_0 = conv_block_nested(filters[2], filters[3], filters[3])
@@ -99,7 +99,6 @@ class Nested_UNet_Efficient(nn.Module):
         #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
 
         self.res.endpoints = self.res.extract_endpoints(x)
-
 
         #x0_0  = self.frontend(x)
         x0_0  = self.conv0_0(x)
