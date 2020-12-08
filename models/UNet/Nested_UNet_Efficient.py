@@ -180,6 +180,8 @@ class Nested_UNet_Efficient(nn.Module):
         output3 = self.final3(x0_3)
         output4 = self.final4(x0_4)
 
+        #output = self.final(x0_4)
+
         prob.append(output1)
         prob.append(output2)
         prob.append(output3)
