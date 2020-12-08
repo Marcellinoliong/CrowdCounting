@@ -89,7 +89,7 @@ class Nested_UNet_Efficient(nn.Module):
         #)
         #self.dense = models.DenseNet()
 
-        self.Expand3 = Conv2d(in_channels=1, out_channels=64, kernel_size=1, bias=False)
+        self.Expand3 = nn.Conv2d(in_channels=1, out_channels=64, kernel_size=1, bias=False)
 
     def forward(self, x):
         #x = self.dense.features(x)
