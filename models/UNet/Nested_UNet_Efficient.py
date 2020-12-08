@@ -100,12 +100,7 @@ class Nested_UNet_Efficient(nn.Module):
 
         x_en = self.res._swish(self.res._bn0(self.res._conv_stem(x)))
 
-        
         print(x_en.size())
-        x_en1 = self.res._swish(self.res._conv_stem(x))
-        print(x_en1.size())
-        x_en2 = self.res._swish(self.res._bn1(x_en))
-        print(x_en2.size())
 
         #layer 1 dan 2
         drop_connect_rate = self.res._global_params.drop_connect_rate
@@ -113,10 +108,12 @@ class Nested_UNet_Efficient(nn.Module):
             drop_connect_rate *= float(0) / len(self.res._blocks) # scale drop connect_rate
         x_en = self.res._blocks[0](x_en, drop_connect_rate=drop_connect_rate)
         
+        print(x_en.size())
         if drop_connect_rate:
             drop_connect_rate *= float(1) / len(self.res._blocks) # scale drop connect_rate
         x_en = self.res._blocks[1](x_en, drop_connect_rate=drop_connect_rate)
 
+        print(x_en.size())
         #x0_0  = self.frontend(x)
         x0_0  = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
