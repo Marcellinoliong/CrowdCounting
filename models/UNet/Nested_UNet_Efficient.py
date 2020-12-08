@@ -175,18 +175,19 @@ class Nested_UNet_Efficient(nn.Module):
         #else:
         #    output = self.final(x0_4)
         #    return output
-        output1 = self.final1(x0_1)
-        output2 = self.final2(x0_2)
-        output3 = self.final3(x0_3)
-        output4 = self.final4(x0_4)
+        #output1 = self.final1(x0_1)
+        #output2 = self.final2(x0_2)
+        #output3 = self.final3(x0_3)
+        #output4 = self.final4(x0_4)
 
-        #output = self.final(x0_4)
+        output = self.final(x0_4)
+        return output
 
-        prob.append(output1)
-        prob.append(output2)
-        prob.append(output3)
-        prob.append(output4)
-        return prob
+        #prob.append(output1)
+        #prob.append(output2)
+        #prob.append(output3)
+        #prob.append(output4)
+        #return prob
             
             
 if __name__ == '__main__':
