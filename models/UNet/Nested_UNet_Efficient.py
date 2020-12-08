@@ -110,12 +110,11 @@ class Nested_UNet_Efficient(nn.Module):
             drop_connect_rate *= float(1) / len(self.res._blocks) # scale drop connect_rate
         x_en = self.res._blocks[1](x_en, drop_connect_rate=drop_connect_rate)
 
-        print(x_en.size())
         #x0_0  = self.frontend(x)
         x0_0  = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
-        #print(x0_0.size())
-        #print(x1_0.size())
+        print(x0_0.size())
+        print(x1_0.size())
         #print((F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)).size())
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
@@ -138,6 +137,7 @@ class Nested_UNet_Efficient(nn.Module):
         #x3_0 = self.conv3_0(self.pool(x2_0))
         x3_0 = x_en
         print(x3_0.size())
+        print(F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True))
         x2_1 = self.conv2_1(torch.cat([x2_0, F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_2 = self.conv1_2(torch.cat([x1_0, x1_1, F.interpolate(x2_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_3 = self.conv0_3(torch.cat([x0_0, x0_1, x0_2, F.interpolate(x1_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
