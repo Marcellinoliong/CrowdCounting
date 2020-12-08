@@ -156,6 +156,7 @@ class Nested_UNet_Efficient(nn.Module):
         #x_en = self.res._blocks[5](x_en, drop_connect_rate=drop_connect_rate)
         
         #x4_0 = self.conv4_0(self.pool(x3_0))
+        print(x_en.size())
         x_en = self.Expand4(x_en)
         x4_0 = x_en
         print(x4_0.size())
