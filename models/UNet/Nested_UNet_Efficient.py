@@ -111,6 +111,7 @@ class Nested_UNet_Efficient(nn.Module):
         #x_en = self.res._blocks[1](x_en, drop_connect_rate=drop_connect_rate)
 
         #x0_0  = self.frontend(x)
+        print(x.size())
         x0_0  = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
         print(x0_0.size())
