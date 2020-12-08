@@ -90,7 +90,7 @@ class Trainer():
             gt_map = Variable(gt_map).cuda()
 
             self.optimizer.zero_grad()
-            prob = self.net(img, gt_map)
+            pred_map = self.net(img, gt_map)
             #loss1 = self.net.build_loss(prob, gt_map)
             #loss2 = self.net.build_loss(prob, gt_map)
             #loss3 = self.net.build_loss(prob, gt_map)
