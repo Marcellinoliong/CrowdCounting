@@ -104,7 +104,7 @@ class Nested_UNet_Efficient(nn.Module):
         print(x_en.size())
         x_en1 = self.res._swish(self.res._conv_stem(x))
         print(x_en1.size())
-        x_en2 = self.res._swish(self.res._bn1(self.res._conv_stem(x)))
+        x_en2 = self.res._swish(self.res._bn1(x_en1))
         print(x_en2.size())
 
         #layer 1 dan 2
