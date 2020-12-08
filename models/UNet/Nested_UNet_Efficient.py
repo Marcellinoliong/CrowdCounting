@@ -98,17 +98,17 @@ class Nested_UNet_Efficient(nn.Module):
         #      drop_connect_rate *= float(idx) / len(self.res._blocks) # scale drop connect_rate
         #   x = self.res._blocks[idx](x, drop_connect_rate=drop_connect_rate)
 
-        x_en = self.res._swish(self.res._bn0(self.res._conv_stem(x)))
+        #x_en = self.res._swish(self.res._bn0(self.res._conv_stem(x)))
 
         #layer 1 dan 2
-        drop_connect_rate = self.res._global_params.drop_connect_rate
-        if drop_connect_rate:
-            drop_connect_rate *= float(0) / len(self.res._blocks) # scale drop connect_rate
-        x_en = self.res._blocks[0](x_en, drop_connect_rate=drop_connect_rate)
+        #drop_connect_rate = self.res._global_params.drop_connect_rate
+        #if drop_connect_rate:
+        #    drop_connect_rate *= float(0) / len(self.res._blocks) # scale drop connect_rate
+        #x_en = self.res._blocks[0](x_en, drop_connect_rate=drop_connect_rate)
         
-        if drop_connect_rate:
-            drop_connect_rate *= float(1) / len(self.res._blocks) # scale drop connect_rate
-        x_en = self.res._blocks[1](x_en, drop_connect_rate=drop_connect_rate)
+        #if drop_connect_rate:
+        #    drop_connect_rate *= float(1) / len(self.res._blocks) # scale drop connect_rate
+        #x_en = self.res._blocks[1](x_en, drop_connect_rate=drop_connect_rate)
 
         #x0_0  = self.frontend(x)
         x0_0  = self.conv0_0(x)
@@ -125,14 +125,14 @@ class Nested_UNet_Efficient(nn.Module):
         x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, F.interpolate(x1_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         #layer 3 dan 4
-        drop_connect_rate = self.res._global_params.drop_connect_rate
-        if drop_connect_rate:
-            drop_connect_rate *= float(2) / len(self.res._blocks) # scale drop connect_rate
-        x_en = self.res._blocks[2](x_en, drop_connect_rate=drop_connect_rate)
+        #drop_connect_rate = self.res._global_params.drop_connect_rate
+        #if drop_connect_rate:
+        #    drop_connect_rate *= float(2) / len(self.res._blocks) # scale drop connect_rate
+        #x_en = self.res._blocks[2](x_en, drop_connect_rate=drop_connect_rate)
         
-        if drop_connect_rate:
-            drop_connect_rate *= float(3) / len(self.res._blocks) # scale drop connect_rate
-        x_en = self.res._blocks[3](x_en, drop_connect_rate=drop_connect_rate)
+        #if drop_connect_rate:
+        #    drop_connect_rate *= float(3) / len(self.res._blocks) # scale drop connect_rate
+        #x_en = self.res._blocks[3](x_en, drop_connect_rate=drop_connect_rate)
         x3_0 = self.conv3_0(self.pool(x2_0))
         #x3_0 = x_en
         print(x3_0.size())
@@ -141,14 +141,14 @@ class Nested_UNet_Efficient(nn.Module):
         x0_3 = self.conv0_3(torch.cat([x0_0, x0_1, x0_2, F.interpolate(x1_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         #layer 5 dan 6
-        drop_connect_rate = self.res._global_params.drop_connect_rate
-        if drop_connect_rate:
-            drop_connect_rate *= float(4) / len(self.res._blocks) # scale drop connect_rate
-        x_en = self.res._blocks[4](x_en, drop_connect_rate=drop_connect_rate)
+        #drop_connect_rate = self.res._global_params.drop_connect_rate
+        #if drop_connect_rate:
+        #    drop_connect_rate *= float(4) / len(self.res._blocks) # scale drop connect_rate
+        #x_en = self.res._blocks[4](x_en, drop_connect_rate=drop_connect_rate)
         
-        if drop_connect_rate:
-            drop_connect_rate *= float(5) / len(self.res._blocks) # scale drop connect_rate
-        x_en = self.res._blocks[5](x_en, drop_connect_rate=drop_connect_rate)
+        #if drop_connect_rate:
+        #    drop_connect_rate *= float(5) / len(self.res._blocks) # scale drop connect_rate
+        #x_en = self.res._blocks[5](x_en, drop_connect_rate=drop_connect_rate)
         x4_0 = self.conv4_0(self.pool(x3_0))
         #x4_0 = x_en
         print(x4_0.size())
