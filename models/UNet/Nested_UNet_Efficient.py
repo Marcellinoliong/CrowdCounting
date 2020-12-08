@@ -43,7 +43,7 @@ class conv_block_nested(nn.Module):
 
 class Nested_UNet_Efficient(nn.Module):
 
-    def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=True):
+    def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
         super(Nested_UNet_Efficient, self).__init__()
 
         n1 = 8
@@ -165,23 +165,16 @@ class Nested_UNet_Efficient(nn.Module):
         x1_3 = self.conv1_3(torch.cat([x1_0, x1_1, x1_2, F.interpolate(x2_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_4 = self.conv0_4(torch.cat([x0_0, x0_1, x0_2, x0_3, F.interpolate(x1_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        #if self.deep_supervision:
-        #    output1 = self.final1(x0_1)
-        #    output2 = self.final2(x0_2)
-        #    output3 = self.final3(x0_3)
-        #    output4 = self.final4(x0_4)
-        #    return (output1 + output2 + output3 + output4)/4
+        if self.deep_supervision:
+            output1 = self.final1(x0_1)
+            output2 = self.final2(x0_2)
+            output3 = self.final3(x0_3)
+            output4 = self.final4(x0_4)
+            return (output1 + output2 + output3 + output4)/4
 
-        #else:
-        #    output = self.final(x0_4)
-        #    return output
-        #output1 = self.final1(x0_1)
-        #output2 = self.final2(x0_2)
-        #output3 = self.final3(x0_3)
-        #output4 = self.final4(x0_4)
-
-        output = self.final(x0_4)
-        return output
+        else:
+            output = self.final(x0_4)
+            return output
 
         #prob.append(output1)
         #prob.append(output2)
