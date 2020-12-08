@@ -90,13 +90,14 @@ class Trainer():
             gt_map = Variable(gt_map).cuda()
 
             self.optimizer.zero_grad()
-            pred_map1, pred_map2, pred_map3, pred_map4 = self.net(img, gt_map)
-            loss1 = self.net.build_loss(pred_map1, gt_map)
-            loss2 = self.net.build_loss(pred_map2, gt_map)
-            loss3 = self.net.build_loss(pred_map3, gt_map)
-            loss4 = self.net.build_loss(pred_map4, gt_map)
-            loss = (loss1 + loss2 + loss3 + loss4) / 4
+            prob = self.net(img, gt_map)
+            #loss1 = self.net.build_loss(prob, gt_map)
+            #loss2 = self.net.build_loss(prob, gt_map)
+            #loss3 = self.net.build_loss(prob, gt_map)
+            #loss4 = self.net.build_loss(prob, gt_map)
+            #loss = (loss1 + loss2 + loss3 + loss4) / 4
             #loss = self.net.loss
+            loss = self.net.build_loss(prob, gt_map)
             loss.backward()
             self.optimizer.step()
 

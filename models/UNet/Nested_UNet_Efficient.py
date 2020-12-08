@@ -93,6 +93,7 @@ class Nested_UNet_Efficient(nn.Module):
         self.Expand4 = nn.Conv2d(in_channels=32, out_channels=128, kernel_size=1, bias=False)
 
     def forward(self, x):
+        prob = list()
         #x = self.dense.features(x)
         #x = self.frontend(x)
         #for idx in range(18):            
@@ -178,7 +179,12 @@ class Nested_UNet_Efficient(nn.Module):
         output2 = self.final2(x0_2)
         output3 = self.final3(x0_3)
         output4 = self.final4(x0_4)
-        return output1, output2, output3, output4
+
+        prob.append(output1)
+        prob.append(output2)
+        prob.append(output3)
+        prob.append(output4)
+        return prob
             
             
 if __name__ == '__main__':
