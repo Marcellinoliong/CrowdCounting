@@ -90,6 +90,7 @@ class Nested_UNet_Efficient(nn.Module):
         #self.dense = models.DenseNet()
 
         self.Expand3 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=1, bias=False)
+        self.Expand4 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=1, bias=False)
 
     def forward(self, x):
         #x = self.dense.features(x)
@@ -137,8 +138,8 @@ class Nested_UNet_Efficient(nn.Module):
         #x_en = self.res._blocks[3](x_en, drop_connect_rate=drop_connect_rate)
         
         #x3_0 = self.conv3_0(self.pool(x2_0))
+        x_en = self.Expand3(x_en)
         x3_0 = x_en
-        x3_0 = self.Expand3(x3_0)
         print(x3_0.size())
         x2_1 = self.conv2_1(torch.cat([x2_0, F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_2 = self.conv1_2(torch.cat([x1_0, x1_1, F.interpolate(x2_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
@@ -155,6 +156,7 @@ class Nested_UNet_Efficient(nn.Module):
         #x_en = self.res._blocks[5](x_en, drop_connect_rate=drop_connect_rate)
         
         #x4_0 = self.conv4_0(self.pool(x3_0))
+        x_en = self.Expand4(x_en)
         x4_0 = x_en
         print(x4_0.size())
         x3_1 = self.conv3_1(torch.cat([x3_0, F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
