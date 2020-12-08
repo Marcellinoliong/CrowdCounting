@@ -100,15 +100,12 @@ class Nested_UNet_Efficient(nn.Module):
 
         x_en = self.res._swish(self.res._bn0(self.res._conv_stem(x)))
 
-        print(x_en.size())
-
         #layer 1 dan 2
         drop_connect_rate = self.res._global_params.drop_connect_rate
         if drop_connect_rate:
             drop_connect_rate *= float(0) / len(self.res._blocks) # scale drop connect_rate
         x_en = self.res._blocks[0](x_en, drop_connect_rate=drop_connect_rate)
         
-        print(x_en.size())
         if drop_connect_rate:
             drop_connect_rate *= float(1) / len(self.res._blocks) # scale drop connect_rate
         x_en = self.res._blocks[1](x_en, drop_connect_rate=drop_connect_rate)
@@ -117,8 +114,8 @@ class Nested_UNet_Efficient(nn.Module):
         #x0_0  = self.frontend(x)
         x0_0  = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
-        print(x0_0.size())
-        print(x1_0.size())
+        #print(x0_0.size())
+        #print(x1_0.size())
         #print((F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)).size())
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
@@ -134,9 +131,9 @@ class Nested_UNet_Efficient(nn.Module):
             drop_connect_rate *= float(2) / len(self.res._blocks) # scale drop connect_rate
         x_en = self.res._blocks[2](x_en, drop_connect_rate=drop_connect_rate)
         
-        if drop_connect_rate:
-            drop_connect_rate *= float(3) / len(self.res._blocks) # scale drop connect_rate
-        x_en = self.res._blocks[3](x_en, drop_connect_rate=drop_connect_rate)
+        #if drop_connect_rate:
+        #    drop_connect_rate *= float(3) / len(self.res._blocks) # scale drop connect_rate
+        #x_en = self.res._blocks[3](x_en, drop_connect_rate=drop_connect_rate)
         
         #x3_0 = self.conv3_0(self.pool(x2_0))
         x3_0 = x_en
@@ -148,12 +145,12 @@ class Nested_UNet_Efficient(nn.Module):
         #layer 5 dan 6
         drop_connect_rate = self.res._global_params.drop_connect_rate
         if drop_connect_rate:
-            drop_connect_rate *= float(4) / len(self.res._blocks) # scale drop connect_rate
+            drop_connect_rate *= float(3) / len(self.res._blocks) # scale drop connect_rate
         x_en = self.res._blocks[4](x_en, drop_connect_rate=drop_connect_rate)
         
-        if drop_connect_rate:
-            drop_connect_rate *= float(5) / len(self.res._blocks) # scale drop connect_rate
-        x_en = self.res._blocks[5](x_en, drop_connect_rate=drop_connect_rate)
+        #if drop_connect_rate:
+        #    drop_connect_rate *= float(5) / len(self.res._blocks) # scale drop connect_rate
+        #x_en = self.res._blocks[5](x_en, drop_connect_rate=drop_connect_rate)
         
         #x4_0 = self.conv4_0(self.pool(x3_0))
         x4_0 = x_en
