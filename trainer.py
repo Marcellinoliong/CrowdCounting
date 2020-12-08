@@ -97,7 +97,7 @@ class Trainer():
             #loss4 = self.net.build_loss(prob, gt_map)
             #loss = (loss1 + loss2 + loss3 + loss4) / 4
             #loss = self.net.loss
-            loss = self.net.build_loss(torch.sqrt(prob), gt_map))
+            loss = self.net.build_loss(torch.sqrt(prob), gt_map)
             loss.backward()
             self.optimizer.step()
 
