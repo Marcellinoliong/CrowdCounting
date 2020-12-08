@@ -100,6 +100,12 @@ class Nested_UNet_Efficient(nn.Module):
 
         x_en = self.res._swish(self.res._bn0(self.res._conv_stem(x)))
 
+        
+        x_en1 = self.res._swish(self.res._conv_stem(x))
+        x_en2 = self.res._swish(self.res._bn0(x))
+        print(x_en1.size())
+        print(x_en2.size())
+
         #layer 1 dan 2
         drop_connect_rate = self.res._global_params.drop_connect_rate
         if drop_connect_rate:
