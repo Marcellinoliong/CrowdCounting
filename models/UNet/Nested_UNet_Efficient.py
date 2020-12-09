@@ -91,7 +91,7 @@ class Nested_UNet_Efficient(nn.Module):
 
         self.Expand2 = nn.Conv2d(in_channels=32, out_channels=256, kernel_size=1, bias=False)
         self.Expand3 = nn.Conv2d(in_channels=32, out_channels=512, kernel_size=1, bias=False)
-        self.Expand4 = nn.Conv2d(in_channels=32, out_channels=1024, kernel_size=1, bias=False)
+        self.Expand4 = nn.Conv2d(in_channels=48, out_channels=1024, kernel_size=1, bias=False)
 
     def forward(self, x):
         prob = list()
