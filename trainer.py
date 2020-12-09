@@ -83,6 +83,7 @@ class Trainer():
 
     def train(self): # training for all datasets
         self.net.train()
+        maxdiff = 0
         for i, data in enumerate(self.train_loader, 0):
             self.timer['iter time'].tic()
             img, gt_map = data
@@ -101,13 +102,17 @@ class Trainer():
             loss.backward()
             self.optimizer.step()
 
+            diff = abs((gt_map[0].sum().data/self.cfg_data.LOG_PARA)-(pred_map[0].sum().data/self.cfg_data.LOG_PARA))
+            if diff > maxdiff:
+                maxdiff = diff
+
             if (i + 1) % cfg.PRINT_FREQ == 0:
                 self.i_tb += 1
                 self.writer.add_scalar('train_loss', loss.item(), self.i_tb)
                 self.timer['iter time'].toc(average=False)
                 print( '[ep %d][it %d][loss %.4f][lr %.4f][%.2fs]' % \
                         (self.epoch + 1, i + 1, loss.item(), self.optimizer.param_groups[0]['lr']*10000, self.timer['iter time'].diff) )
-                print( '        [cnt: gt: %.1f pred: %.2f different: %.2f]' % (gt_map[0].sum().data/self.cfg_data.LOG_PARA, pred_map[0].sum().data/self.cfg_data.LOG_PARA, abs((gt_map[0].sum().data/self.cfg_data.LOG_PARA)-(pred_map[0].sum().data/self.cfg_data.LOG_PARA))) )           
+                print( '        [cnt: gt: %.1f pred: %.2f different: %.2f max: %.2f]' % (gt_map[0].sum().data/self.cfg_data.LOG_PARA, pred_map[0].sum().data/self.cfg_data.LOG_PARA, diff, maxdiff) )           
 
 
     def validate_V1(self):# validate_V1 for SHHA, SHHB, UCF-QNRF, UCF50
@@ -130,17 +135,24 @@ class Trainer():
                 pred_map = pred_map.data.cpu().numpy()
                 gt_map = gt_map.data.cpu().numpy()
 
+                maet = 0
+                mset = 0
+
                 for i_img in range(pred_map.shape[0]):
                 
                     pred_cnt = np.sum(pred_map[i_img])/self.cfg_data.LOG_PARA
                     gt_count = np.sum(gt_map[i_img])/self.cfg_data.LOG_PARA
 
+                    maet = abs(gt_count-pred_cnt)
+                    mset = (gt_count-pred_cnt)*(gt_count-pred_cnt)
                     
                     losses.update(self.net.loss.item())
                     maes.update(abs(gt_count-pred_cnt))
                     mses.update((gt_count-pred_cnt)*(gt_count-pred_cnt))
                 if vi==0:
                     vis_results(self.exp_name, self.epoch, self.writer, self.restore_transform, img, pred_map, gt_map)
+                print( '[cnt: mae: %.1f mse: %.2f]' % (maet, mset))           
+
             
         mae = maes.avg
         mse = np.sqrt(mses.avg)
