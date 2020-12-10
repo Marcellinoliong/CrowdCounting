@@ -27,24 +27,6 @@ class conv_block_nested(nn.Module):
 
         return output
 
-
-class _DenseBlock(nn.Sequential):
-    def __init__(self, num_layers, num_input_features, bn_size, growth_rate, drop_rate):
-        super(_DenseBlock, self).__init__()
-        for i in range(num_layers):
-            layer = _DenseLayer(num_input_features + i * growth_rate, growth_rate, bn_size, drop_rate)
-            self.add_module('denselayer%d' % (i + 1), layer)
-
-
-class _Transition(nn.Sequential):
-    def __init__(self, num_input_features, num_output_features):
-        super(_Transition, self).__init__()
-        self.add_module('norm', nn.BatchNorm2d(num_input_features))
-        self.add_module('relu', nn.ReLU(inplace=True))
-        self.add_module('conv', nn.Conv2d(num_input_features, num_output_features,
-                                          kernel_size=1, stride=1, bias=False))
-        self.add_module('pool', nn.AvgPool2d(kernel_size=2, stride=2))
-
 class Nested_UNet_Densenet(nn.Module):
 
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
@@ -154,7 +136,7 @@ class Nested_UNet_Densenet(nn.Module):
 
         x_dn = self.dense.features(x)
         print(x_dn)
-        
+
         x0_0  = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
