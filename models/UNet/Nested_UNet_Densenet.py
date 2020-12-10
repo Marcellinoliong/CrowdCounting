@@ -80,35 +80,35 @@ class Nested_UNet_Densenet(nn.Module):
         ]))
 
         num_features = num_init_features
-        self.block1 = self.dense._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block1 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans1 = self.dense._Transition(num_input_features=num_features, num_output_features=num_features // 2)                       
+        self.trans1 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)                       
 
-        self.block2 = self.dense._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block2 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans2 = self.dense._Transition(num_input_features=num_features, num_output_features=num_features // 2)     
+        self.trans2 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)     
 
-        self.block3 = self.dense._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block3 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans3 = self.dense._Transition(num_input_features=num_features, num_output_features=num_features // 2)    
+        self.trans3 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
-        self.block4 = self.dense._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block4 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans4 = self.dense._Transition(num_input_features=num_features, num_output_features=num_features // 2)    
+        self.trans4 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
-        self.block5 = self.dense._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block5 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans5 = self.dense._Transition(num_input_features=num_features, num_output_features=num_features // 2)  
+        self.trans5 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)  
 
-        self.block6 = self.dense._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block6 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans6 = self.dense._Transition(num_input_features=num_features, num_output_features=num_features // 2)    
+        self.trans6 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
     def forward(self, x):
         x_dn = self.frontend(x)
