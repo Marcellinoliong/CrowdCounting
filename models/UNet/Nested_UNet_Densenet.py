@@ -27,6 +27,24 @@ class conv_block_nested(nn.Module):
 
         return output
 
+
+class _DenseBlock(nn.Sequential):
+    def __init__(self, num_layers, num_input_features, bn_size, growth_rate, drop_rate):
+        super(_DenseBlock, self).__init__()
+        for i in range(num_layers):
+            layer = _DenseLayer(num_input_features + i * growth_rate, growth_rate, bn_size, drop_rate)
+            self.add_module('denselayer%d' % (i + 1), layer)
+
+
+class _Transition(nn.Sequential):
+    def __init__(self, num_input_features, num_output_features):
+        super(_Transition, self).__init__()
+        self.add_module('norm', nn.BatchNorm2d(num_input_features))
+        self.add_module('relu', nn.ReLU(inplace=True))
+        self.add_module('conv', nn.Conv2d(num_input_features, num_output_features,
+                                          kernel_size=1, stride=1, bias=False))
+        self.add_module('pool', nn.AvgPool2d(kernel_size=2, stride=2))
+
 class Nested_UNet_Densenet(nn.Module):
 
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
@@ -80,35 +98,35 @@ class Nested_UNet_Densenet(nn.Module):
         ]))
 
         num_features = num_init_features
-        self.block1 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block1 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans1 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)                       
+        self.trans1 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)                       
 
-        self.block2 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block2 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans2 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)     
+        self.trans2 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)     
 
-        self.block3 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block3 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans3 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)    
+        self.trans3 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
-        self.block4 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block4 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans4 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)    
+        self.trans4 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
-        self.block5 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block5 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans5 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)  
+        self.trans5 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)  
 
-        self.block6 = models._DenseBlock(num_layers=num_features, num_input_features=num_features,
+        self.block6 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
-        self.trans6 = models._Transition(num_input_features=num_features, num_output_features=num_features // 2)    
+        self.trans6 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
     def forward(self, x):
         x_dn = self.frontend(x)
