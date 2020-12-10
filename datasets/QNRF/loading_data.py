@@ -80,10 +80,13 @@ def loading_data():
     mean_std = cfg_data.MEAN_STD
     log_para = cfg_data.LOG_PARA
     train_main_transform = own_transforms.Compose([
+    	own_transforms.RandomCrop(cfg_data.TRAIN_SIZE),
     	own_transforms.RandomHorizontallyFlip()
     ])
+    val_main_transform = own_transforms.Compose([
+        own_transforms.RandomCrop(cfg_data.TRAIN_SIZE)
+    ])
     img_transform = standard_transforms.Compose([
-        own_transforms.RandomCrop(cfg_data.TRAIN_SIZE),
         standard_transforms.ToTensor(),
         standard_transforms.Normalize(*mean_std)
     ])
@@ -99,7 +102,7 @@ def loading_data():
     train_loader = DataLoader(train_set, batch_size=cfg_data.TRAIN_BATCH_SIZE, num_workers=0, collate_fn=SHHA_collate, shuffle=True, drop_last=True)
     
 
-    val_set = QNRF(cfg_data.DATA_PATH+'/test', 'test', main_transform=None, img_transform=img_transform, gt_transform=gt_transform)
+    val_set = QNRF(cfg_data.DATA_PATH+'/test', 'test', main_transform=val_main_transform, img_transform=img_transform, gt_transform=gt_transform)
     val_loader = DataLoader(val_set, batch_size=cfg_data.VAL_BATCH_SIZE, num_workers=0, shuffle=True, drop_last=False)
 
     return train_loader, val_loader, restore_transform
