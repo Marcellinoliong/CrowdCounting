@@ -135,7 +135,7 @@ class Nested_UNet_Densenet(nn.Module):
         #print(x_dn)
 
         x_dn = self.dense.features(x)
-        print(x_dn)
+        print(x_dn.size())
 
         x0_0  = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
