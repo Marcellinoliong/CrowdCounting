@@ -142,16 +142,15 @@ class Nested_UNet_Densenet(nn.Module):
 
         x_dn = self.trans(x_dn)
         print(x_dn.size())
-        x_dn = F.interpolate(x_dn, scale_factor=8, mode='bilinear', align_corners=True)
+        x_dn = F.interpolate(x_dn, scale_factor=32, mode='bilinear', align_corners=True)
         print(x_dn.size())
 
-        x0_0  = self.conv0_0(x)
+        #x0_0  = self.conv0_0(x)
+        x0_0 = x_dn
         x1_0 = self.conv1_0(self.pool(x0_0))
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        x2_0 = x_dn
-        #print(x2_0.size())
-        #x2_0 = self.conv2_0(self.pool(x1_0))
+        x2_0 = self.conv2_0(self.pool(x1_0))
         x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, F.interpolate(x1_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
