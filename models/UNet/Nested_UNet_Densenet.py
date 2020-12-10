@@ -142,7 +142,7 @@ class Nested_UNet_Densenet(nn.Module):
 
         x_dn = self.trans(x_dn)
         print(x_dn.size())
-        x_dn = self.avg(x_dn)
+        x_dn = x_dn.resize_(1, 64, 576, 768)
         print(x_dn.size())
 
         x0_0  = self.conv0_0(x)
