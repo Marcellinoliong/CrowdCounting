@@ -137,13 +137,13 @@ class Nested_UNet_Densenet(nn.Module):
         #x_dn = self.trans6(x_dn)
         #print(x_dn)
 
-        x_dn = self.dense.features(x)
-        print(x_dn.size())
+        #x_dn = self.dense.features(x)
+        #print(x_dn.size())
 
-        x_dn = self.trans(x_dn)
-        print(x_dn.size())
-        x_dn = x_dn.resize_(1, 64, 576, 768)
-        print(x_dn.size())
+        #x_dn = self.trans(x_dn)
+        #print(x_dn.size())
+        #x_dn = x_dn.resize_(1, 64, 576, 768)
+        #print(x_dn.size())
 
         x0_0  = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
@@ -173,6 +173,7 @@ class Nested_UNet_Densenet(nn.Module):
 
         else:
             output = self.final(x0_4)
+            print(output.size())
             return output
             
 if __name__ == '__main__':
