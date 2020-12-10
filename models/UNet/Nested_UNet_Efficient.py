@@ -163,6 +163,7 @@ class Nested_UNet_Efficient(nn.Module):
         
         #x4_0 = self.conv4_0(self.pool(x3_0))
         x4_0 = x_en
+        print(x_en.size())
         x4_0 = self.Expand4(x_en)
         #print(x4_0.size())
         x4_0 = F.interpolate(x4_0, scale_factor=4, mode='bilinear', align_corners=True)
