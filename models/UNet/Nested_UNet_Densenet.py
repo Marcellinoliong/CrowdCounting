@@ -71,14 +71,15 @@ class Nested_UNet_Densenet(nn.Module):
 
         self.dense = models.densenet161(pretrained=True)
 
+        num_init_features = 96
         self.frontend = nn.Sequential(OrderedDict([
-            ('conv0', nn.Conv2d(3, self.dense.num_init_features, kernel_size=7, stride=2, padding=3, bias=False)),
-            ('norm0', nn.BatchNorm2d(self.dense.num_init_features)),
+            ('conv0', nn.Conv2d(3, num_init_features, kernel_size=7, stride=2, padding=3, bias=False)),
+            ('norm0', nn.BatchNorm2d(num_init_features)),
             ('relu0', nn.ReLU(inplace=True)),
             ('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
         ]))
 
-        num_features = self.dense.num_init_features
+        num_features = num_init_features
         self.block1 = self.dense._DenseBlock(num_layers=num_features, num_input_features=num_features,
                                 bn_size=self.dense.bn_size, growth_rate=self.dense.growth_rate, drop_rate=self.dense.drop_rate)
         num_features = num_features + self.dense.num_layers * self.dense.growth_rate
