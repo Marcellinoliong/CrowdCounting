@@ -148,6 +148,8 @@ class Nested_UNet_Densenet(nn.Module):
         x0_0  = self.conv0_0(x)
         x1_0 = self.conv1_0(self.pool(x0_0))
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        print(x1_0.size())
+        print((F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)).size())
         print((torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1)).size())
 
         x2_0 = self.dense.features(x)
