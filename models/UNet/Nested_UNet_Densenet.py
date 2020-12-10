@@ -41,7 +41,7 @@ class Nested_UNet_Densenet(nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         #self.Up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
 
-        self.conv0_0 = conv_block_nested(filters[0], filters[0], filters[0])
+        self.conv0_0 = conv_block_nested(in_ch, filters[0], filters[0])
         self.conv1_0 = conv_block_nested(filters[0], filters[1], filters[1])
         self.conv2_0 = conv_block_nested(filters[1], filters[2], filters[2])
         self.conv3_0 = conv_block_nested(filters[2], filters[3], filters[3])
@@ -113,6 +113,9 @@ class Nested_UNet_Densenet(nn.Module):
         #num_features = num_features + self.dense.num_layers * growth_rate
         #self.trans6 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
+        self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
+        self.avg = nn.AvgPool2d(in_ch=2208, out_ch=64, padding=2, stride=2)
+
     def forward(self, x):
         #x_dn = self.frontend(x)
         #x_dn = self.block1(x_dn)
@@ -135,6 +138,11 @@ class Nested_UNet_Densenet(nn.Module):
         #print(x_dn)
 
         x_dn = self.dense.features(x)
+        print(x_dn.size())
+
+        x_dn = self.trans(x_dn)
+        print(x_dn.size())
+        x_dn = self.avg(x_dn)
         print(x_dn.size())
 
         x0_0  = self.conv0_0(x)
