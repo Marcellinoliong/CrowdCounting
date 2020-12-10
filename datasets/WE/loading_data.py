@@ -15,7 +15,7 @@ def loading_data():
     ])
     val_main_transform = None
     img_transform = standard_transforms.Compose([
-        standard_transforms.RandomCrop(cfg_data.TRAIN_SIZE),
+        own_transforms.RandomCrop(cfg_data.TRAIN_SIZE),
         standard_transforms.ToTensor(),
         standard_transforms.Normalize(*mean_std)
     ])
