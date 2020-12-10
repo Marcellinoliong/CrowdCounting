@@ -82,36 +82,36 @@ class Nested_UNet_Densenet(nn.Module):
             ('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
         ]))
 
-        num_features = num_init_features
-        self.block1 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
-                                bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
-        num_features = num_features + self.dense.num_layers * growth_rate
-        self.trans1 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)                       
+        #num_features = num_init_features
+        #self.block1 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
+        #                        bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
+        #num_features = num_features + self.dense.num_layers * growth_rate
+        #self.trans1 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)                       
 
-        self.block2 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
-                                bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
-        num_features = num_features + self.dense.num_layers * growth_rate
-        self.trans2 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)     
+        #self.block2 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
+        #                        bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
+        #num_features = num_features + self.dense.num_layers * growth_rate
+        #self.trans2 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)     
 
-        self.block3 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
-                                bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
-        num_features = num_features + self.dense.num_layers * growth_rate
-        self.trans3 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
+        #self.block3 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
+        #                        bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
+        #num_features = num_features + self.dense.num_layers * growth_rate
+        #self.trans3 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
-        self.block4 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
-                                bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
-        num_features = num_features + self.dense.num_layers * growth_rate
-        self.trans4 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
+        #self.block4 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
+        #                        bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
+        #num_features = num_features + self.dense.num_layers * growth_rate
+        #self.trans4 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
-        self.block5 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
-                                bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
-        num_features = num_features + self.dense.num_layers * growth_rate
-        self.trans5 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)  
+        #self.block5 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
+        #                        bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
+        #num_features = num_features + self.dense.num_layers * growth_rate
+        #self.trans5 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)  
 
-        self.block6 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
-                                bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
-        num_features = num_features + self.dense.num_layers * growth_rate
-        self.trans6 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
+        #self.block6 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
+        #                        bn_size=bn_size, growth_rate=growth_rate, drop_rate=drop_rate)
+        #num_features = num_features + self.dense.num_layers * growth_rate
+        #self.trans6 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
     def forward(self, x):
         #x_dn = self.frontend(x)
