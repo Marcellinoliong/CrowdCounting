@@ -83,6 +83,7 @@ def loading_data():
     	own_transforms.RandomHorizontallyFlip()
     ])
     img_transform = standard_transforms.Compose([
+        standard_transforms.RandomCrop(cfg_data.TRAIN_SIZE),
         standard_transforms.ToTensor(),
         standard_transforms.Normalize(*mean_std)
     ])

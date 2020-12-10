@@ -105,10 +105,10 @@ def loading_data():
     log_para = cfg_data.LOG_PARA
     factor = cfg_data.LABEL_FACTOR
     train_main_transform = own_transforms.Compose([
-        own_transforms.RandomCrop(cfg_data.TRAIN_SIZE),
     	own_transforms.RandomHorizontallyFlip()
     ])
     img_transform = standard_transforms.Compose([
+        standard_transforms.RandomCrop(cfg_data.TRAIN_SIZE),
         standard_transforms.ToTensor(),
         standard_transforms.Normalize(*mean_std)
     ])
