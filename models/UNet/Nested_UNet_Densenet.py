@@ -4,8 +4,6 @@ import torch.nn.functional as F
 from torchvision import models
 from collections import OrderedDict
 
-#model_path = '../PyTorch_Pretrained/resnet50-19c8e357.pth'
-
 class conv_block_nested(nn.Module):
 
     def __init__(self, in_ch, mid_ch, out_ch):
@@ -71,16 +69,16 @@ class Nested_UNet_Densenet(nn.Module):
 
         self.dense = models.densenet161(pretrained=True)
 
-        num_init_features = 96
-        growth_rate = 48
-        bn_size=4
-        drop_rate=0
-        self.frontend = nn.Sequential(OrderedDict([
-            ('conv0', nn.Conv2d(3, num_init_features, kernel_size=7, stride=2, padding=3, bias=False)),
-            ('norm0', nn.BatchNorm2d(num_init_features)),
-            ('relu0', nn.ReLU(inplace=True)),
-            ('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
-        ]))
+        #num_init_features = 96
+        #growth_rate = 48
+        #bn_size=4
+        #drop_rate=0
+        #self.frontend = nn.Sequential(OrderedDict([
+        #    ('conv0', nn.Conv2d(3, num_init_features, kernel_size=7, stride=2, padding=3, bias=False)),
+        #    ('norm0', nn.BatchNorm2d(num_init_features)),
+        #    ('relu0', nn.ReLU(inplace=True)),
+        #    ('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
+        #]))
 
         #num_features = num_init_features
         #self.block1 = _DenseBlock(num_layers=num_features, num_input_features=num_features,
@@ -113,8 +111,8 @@ class Nested_UNet_Densenet(nn.Module):
         #num_features = num_features + self.dense.num_layers * growth_rate
         #self.trans6 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
-        self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
-        self.avg = nn.AvgPool2d(kernel_size=2, stride=2)
+        #self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
+        #self.avg = nn.AvgPool2d(kernel_size=2, stride=2)
 
     def forward(self, x):
         #x_dn = self.frontend(x)
