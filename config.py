@@ -35,7 +35,7 @@ __C.MAX_EPOCH = 200
 
 # multi-task learning weights, no use for single model, such as MCNN, VGG, VGG_DECODER, Res50, CSRNet, and so on
 
-__C.LAMBDA_1 = 1e-3
+__C.LAMBDA_1 = 1e-4
 
 
 # print 
