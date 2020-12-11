@@ -111,7 +111,7 @@ class Nested_UNet_Densenet(nn.Module):
         #num_features = num_features + self.dense.num_layers * growth_rate
         #self.trans6 = _Transition(num_input_features=num_features, num_output_features=num_features // 2)    
 
-        #self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
+        self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
         #self.avg = nn.AvgPool2d(kernel_size=2, stride=2)
 
     def forward(self, x):
