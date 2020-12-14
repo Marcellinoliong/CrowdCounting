@@ -25,7 +25,7 @@ class conv_block_nested(nn.Module):
 
         return output
 
-class Nested_UNet_Densenet(nn.Module):
+class Nested_UNet_Densenet5(nn.Module):
 
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
         super(Nested_UNet_Densenet, self).__init__()
