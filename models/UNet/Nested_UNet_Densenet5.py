@@ -44,7 +44,7 @@ class Nested_UNet_Densenet5(nn.Module):
         self.conv2_0 = conv_block_nested(filters[1], filters[2], filters[2])
         self.conv3_0 = conv_block_nested(filters[2], filters[3], filters[3])
         self.conv4_0 = conv_block_nested(filters[3], filters[4], filters[4])
-        self.conv4_0 = conv_block_nested(filters[4], filters[5], filters[5])
+        self.conv5_0 = conv_block_nested(filters[4], filters[5], filters[5])
 
         self.conv0_1 = conv_block_nested(filters[0] + filters[1], filters[0], filters[0])
         self.conv1_1 = conv_block_nested(filters[1] + filters[2], filters[1], filters[1])
