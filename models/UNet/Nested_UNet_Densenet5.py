@@ -110,7 +110,7 @@ class Nested_UNet_Densenet5(nn.Module):
         x3_2 = self.conv3_2(torch.cat([x3_0, x3_1, F.interpolate(x4_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x2_3 = self.conv2_3(torch.cat([x2_0, x2_1, x2_2, F.interpolate(x3_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_4 = self.conv1_4(torch.cat([x1_0, x1_1, x1_2, x1_3, F.interpolate(x2_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        x0_5 = self.conv0_4(torch.cat([x0_0, x0_1, x0_2, x0_3, x0_4, F.interpolate(x1_4, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        x0_5 = self.conv0_5(torch.cat([x0_0, x0_1, x0_2, x0_3, x0_4, F.interpolate(x1_4, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         if self.deep_supervision:
             output1 = self.final1(x0_1)
