@@ -7,7 +7,7 @@ cfg_data = __C_UCSD
 
 __C_UCSD.STD_SIZE = (480,720)
 __C_UCSD.TRAIN_SIZE = (480,720)
-__C_UCSD.DATA_PATH = '/media/D/DataSet/CC/UCSD_480_k15_s4'               
+__C_UCSD.DATA_PATH = '/home/marcellino/CrowdCounting/datasets/ProcessedData/UCSD'               
 
 __C_UCSD.MEAN_STD = ([0.376973062754, 0.376973062754, 0.376973062754],[0.206167116761, 0.206167116761, 0.206167116761])
 

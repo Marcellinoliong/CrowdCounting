@@ -123,17 +123,17 @@ class Nested_UNet_Densenet5(nn.Module):
         x1_4 = self.conv1_4(torch.cat([x1_0, x1_1, x1_2, x1_3, F.interpolate(x2_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_5 = self.conv0_5(torch.cat([x0_0, x0_1, x0_2, x0_3, x0_4, F.interpolate(x1_4, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        if self.deep_supervision:
-            output1 = self.final1(x0_1)
-            output2 = self.final2(x0_2)
-            output3 = self.final3(x0_3)
-            output4 = self.final4(x0_4)
-            output4 = self.final4(x0_5)
-            return (output1 + output2 + output3 + output4 + output5)/5
+        #if self.deep_supervision:
+        output1 = self.final1(x0_1)
+        output2 = self.final2(x0_2)
+        output3 = self.final3(x0_3)
+        output4 = self.final4(x0_4)
+        output4 = self.final4(x0_5)
+        return output1, output2, output3, output4, output5
 
-        else:
-            output = self.final(x0_5)
-            return output
+        #else:
+        #    output = self.final(x0_5)
+        #    return output
             
 if __name__ == '__main__':
     import time
