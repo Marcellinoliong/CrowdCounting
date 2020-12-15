@@ -151,7 +151,7 @@ class Trainer():
                     mses.update((gt_count-pred_cnt)*(gt_count-pred_cnt))
                 if vi==0:
                     vis_results(self.exp_name, self.epoch, self.writer, self.restore_transform, img, pred_map, gt_map)
-                print( '[cnt: mae: %.1f mse: %.2f]' % (maet, mset))           
+                print( '[cnt: mae: %.1f mse: %.2f]' % (maet, np.sqrt(mset)))           
 
             
         mae = maes.avg
