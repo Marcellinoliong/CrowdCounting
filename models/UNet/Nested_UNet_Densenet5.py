@@ -27,7 +27,7 @@ class conv_block_nested(nn.Module):
 
 class Nested_UNet_Densenet5(nn.Module):
 
-    def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=True):
+    def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
         super(Nested_UNet_Densenet5, self).__init__()
 
         n1 = 64
@@ -88,34 +88,34 @@ class Nested_UNet_Densenet5(nn.Module):
         #x0_0  = self.conv0_0(x)
         x0_0 = F.interpolate(x_dn, scale_factor=32, mode='bilinear', align_corners=True)
         #print(x0_0.size())
-        x1_0 = self.conv1_0(self.pool(x0_0))
-        #x1_0 = F.interpolate(x_dn, scale_factor=16, mode='bilinear', align_corners=True)
+        #x1_0 = self.conv1_0(self.pool(x0_0))
+        x1_0 = F.interpolate(x_dn, scale_factor=16, mode='bilinear', align_corners=True)
         #print(x1_0.size())
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        x2_0 = self.conv2_0(self.pool(x1_0))
-        #x2_0 = F.interpolate(x_dn, scale_factor=8, mode='bilinear', align_corners=True)
+        #x2_0 = self.conv2_0(self.pool(x1_0))
+        x2_0 = F.interpolate(x_dn, scale_factor=8, mode='bilinear', align_corners=True)
         #print(x2_0.size())
         x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, F.interpolate(x1_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        x3_0 = self.conv3_0(self.pool(x2_0))
-        #x3_0 = F.interpolate(x_dn, scale_factor=4, mode='bilinear', align_corners=True)
+        #x3_0 = self.conv3_0(self.pool(x2_0))
+        x3_0 = F.interpolate(x_dn, scale_factor=4, mode='bilinear', align_corners=True)
         #print(x3_0.size())
         x2_1 = self.conv2_1(torch.cat([x2_0, F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_2 = self.conv1_2(torch.cat([x1_0, x1_1, F.interpolate(x2_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_3 = self.conv0_3(torch.cat([x0_0, x0_1, x0_2, F.interpolate(x1_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        x4_0 = self.conv4_0(self.pool(x3_0))
-        #x4_0 = F.interpolate(x_dn, scale_factor=2, mode='bilinear', align_corners=True)
+        #x4_0 = self.conv4_0(self.pool(x3_0))
+        x4_0 = F.interpolate(x_dn, scale_factor=2, mode='bilinear', align_corners=True)
         #print(x4_0.size())
         x3_1 = self.conv3_1(torch.cat([x3_0, F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x2_2 = self.conv2_2(torch.cat([x2_0, x2_1, F.interpolate(x3_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_3 = self.conv1_3(torch.cat([x1_0, x1_1, x1_2, F.interpolate(x2_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_4 = self.conv0_4(torch.cat([x0_0, x0_1, x0_2, x0_3, F.interpolate(x1_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         
-        x5_0 = self.conv5_0(self.pool(x4_0))
-        #x5_0 = F.interpolate(x_dn, scale_factor=1, mode='bilinear', align_corners=True)
+        #x5_0 = self.conv5_0(self.pool(x4_0))
+        x5_0 = F.interpolate(x_dn, scale_factor=1, mode='bilinear', align_corners=True)
         #print(x5_0.size())
         x4_1 = self.conv4_1(torch.cat([x4_0, F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x3_2 = self.conv3_2(torch.cat([x3_0, x3_1, F.interpolate(x4_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
@@ -123,17 +123,16 @@ class Nested_UNet_Densenet5(nn.Module):
         x1_4 = self.conv1_4(torch.cat([x1_0, x1_1, x1_2, x1_3, F.interpolate(x2_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_5 = self.conv0_5(torch.cat([x0_0, x0_1, x0_2, x0_3, x0_4, F.interpolate(x1_4, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        #if self.deep_supervision:
-        output1 = self.final1(x0_1)
-        output2 = self.final2(x0_2)
-        output3 = self.final3(x0_3)
-        output4 = self.final4(x0_4)
-        output5 = self.final4(x0_5)
-        return output1, output2, output3, output4, output5
-
-        #else:
-        #    output = self.final(x0_5)
-        #    return output
+        if self.deep_supervision:
+            output1 = self.final1(x0_1)
+            output2 = self.final2(x0_2)
+            output3 = self.final3(x0_3)
+            output4 = self.final4(x0_4)
+            output5 = self.final4(x0_5)
+            return output1, output2, output3, output4, output5
+        else:
+            output = self.final(x0_5)
+            return output
             
 if __name__ == '__main__':
     import time
