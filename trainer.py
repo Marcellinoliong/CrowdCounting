@@ -148,11 +148,11 @@ class Trainer():
                 pred_map5 = pred_maph[4].data.cpu().numpy()
 
                 pred_map = np.mean(
-                    np.vectorize(pred_map1), 
-                    np.vectorize(pred_map2), 
-                    np.vectorize(pred_map3), 
-                    np.vectorize(pred_map4), 
-                    np.vectorize(pred_map5), 
+                    np.array(pred_map1), 
+                    np.array(pred_map2), 
+                    np.array(pred_map3), 
+                    np.array(pred_map4), 
+                    np.array(pred_map5), 
                 )
 
                 gt_map = gt_map.data.cpu().numpy()
