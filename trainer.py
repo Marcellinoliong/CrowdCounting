@@ -72,7 +72,7 @@ class Trainer():
             if epoch%cfg.VAL_FREQ==0 or epoch>cfg.VAL_DENSE_START:
                 self.timer['val time'].tic()
                 if self.data_mode in ['SHHA', 'SHHB', 'QNRF', 'UCF50']:
-                    self.validate_V1()
+                    self.validate_V1_DeepSupervised()
                 elif self.data_mode is 'WE':
                     self.validate_V2()
                 elif self.data_mode is 'GCC':
@@ -121,6 +121,66 @@ class Trainer():
                         (self.epoch + 1, i + 1, loss.item(), self.optimizer.param_groups[0]['lr']*10000, self.timer['iter time'].diff) )
                 print( '        [cnt: gt: %.1f pred: %.2f different: %.2f max: %.2f]' % (gt_map[0].sum().data/self.cfg_data.LOG_PARA, pred_map[0].sum().data/self.cfg_data.LOG_PARA, diff, maxdiff) )           
 
+
+    def validate_V1_DeepSupervised(self):# validate_V1 for SHHA, SHHB, UCF-QNRF, UCF50
+
+        self.net.eval()
+        
+        losses = AverageMeter()
+        maes = AverageMeter()
+        mses = AverageMeter()
+
+        for vi, data in enumerate(self.val_loader, 0):
+            img, gt_map = data
+
+            with torch.no_grad():
+                img = Variable(img).cuda()
+                gt_map = Variable(gt_map).cuda()
+
+                #pred_map = self.net.forward(img,gt_map)
+                #pred_map = pred_map.data.cpu().numpy()
+
+                pred_maph = self.net.forward(img, gt_map)
+                pred_maph[0] = pred_maph[0].data.cpu().numpy()
+                pred_maph[1] = pred_maph[1].data.cpu().numpy()
+                pred_maph[2] = pred_maph[2].data.cpu().numpy()
+                pred_maph[3] = pred_maph[3].data.cpu().numpy()
+                pred_maph[4] = pred_maph[4].data.cpu().numpy()
+
+                pred_map = np.mean(pred_maph[0], pred_maph[1], pred_maph[2], pred_maph[3], pred_maph[4])
+
+                gt_map = gt_map.data.cpu().numpy()
+
+                maet = 0
+                mset = 0
+
+                for i_img in range(pred_map.shape[0]):
+                
+                    pred_cnt = np.sum(pred_map[i_img])/self.cfg_data.LOG_PARA
+                    gt_count = np.sum(gt_map[i_img])/self.cfg_data.LOG_PARA
+
+                    maet = abs(gt_count-pred_cnt)
+                    mset = (gt_count-pred_cnt)*(gt_count-pred_cnt)
+                    
+                    losses.update(self.net.loss.item())
+                    maes.update(abs(gt_count-pred_cnt))
+                    mses.update((gt_count-pred_cnt)*(gt_count-pred_cnt))
+                if vi==0:
+                    vis_results(self.exp_name, self.epoch, self.writer, self.restore_transform, img, pred_map, gt_map)
+                print( '[cnt: mae: %.1f mse: %.2f]' % (maet, np.sqrt(mset)))           
+
+            
+        mae = maes.avg
+        mse = np.sqrt(mses.avg)
+        loss = losses.avg
+
+        self.writer.add_scalar('val_loss', loss, self.epoch + 1)
+        self.writer.add_scalar('mae', mae, self.epoch + 1)
+        self.writer.add_scalar('mse', mse, self.epoch + 1)
+
+        self.train_record = update_model(self.net,self.optimizer,self.scheduler,self.epoch,self.i_tb,self.exp_path,self.exp_name, \
+            [mae, mse, loss],self.train_record,self.log_txt)
+        print_summary(self.exp_name,[mae, mse, loss],self.train_record)
 
     def validate_V1(self):# validate_V1 for SHHA, SHHB, UCF-QNRF, UCF50
 

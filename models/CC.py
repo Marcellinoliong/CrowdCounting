@@ -50,7 +50,7 @@ class CrowdCounter(nn.Module):
         loss3 = self.build_loss(density_map[2].squeeze(), gt_map.squeeze())
         loss4 = self.build_loss(density_map[3].squeeze(), gt_map.squeeze())
         loss5 = self.build_loss(density_map[4].squeeze(), gt_map.squeeze())
-        self.loss_mse = loss1 + loss2 + loss3 + loss4 + loss5           
+        self.loss_mse = (loss1 + loss2 + loss3 + loss4 + loss5)/5           
         return density_map
     
     def build_loss(self, density_map, gt_data):
