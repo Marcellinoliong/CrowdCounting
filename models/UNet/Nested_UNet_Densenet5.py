@@ -78,11 +78,11 @@ class Nested_UNet_Densenet5(nn.Module):
         self.dense = models.densenet161(pretrained=True) 
 
         self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
-        self.trans1 = nn.Conv2d(in_channels=64, out_channels=32, kernel_size=1, bias=False)
-        self.trans2 = nn.Conv2d(in_channels=32, out_channels=16, kernel_size=1, bias=False)
-        self.trans3 = nn.Conv2d(in_channels=16, out_channels=8, kernel_size=1, bias=False)
-        self.trans4 = nn.Conv2d(in_channels=8, out_channels=4, kernel_size=1, bias=False)
-        self.trans5 = nn.Conv2d(in_channels=4, out_channels=2, kernel_size=1, bias=False)
+        self.trans1 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=1, bias=False)
+        self.trans2 = nn.Conv2d(in_channels=128, out_channels=256, kernel_size=1, bias=False)
+        self.trans3 = nn.Conv2d(in_channels=256, out_channels=512, kernel_size=1, bias=False)
+        self.trans4 = nn.Conv2d(in_channels=512, out_channels=1024, kernel_size=1, bias=False)
+        self.trans5 = nn.Conv2d(in_channels=1024, out_channels=2048, kernel_size=1, bias=False)
 
     def forward(self, x):
         x_dn = self.dense.features(x)
