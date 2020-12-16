@@ -78,20 +78,18 @@ class Nested_UNet_Densenet5(nn.Module):
         self.dense = models.densenet161(pretrained=True) 
 
         self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
-        self.trans1 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=1, bias=False)
-        self.trans2 = nn.Conv2d(in_channels=128, out_channels=256, kernel_size=1, bias=False)
-        self.trans3 = nn.Conv2d(in_channels=256, out_channels=512, kernel_size=1, bias=False)
-        self.trans4 = nn.Conv2d(in_channels=512, out_channels=1024, kernel_size=1, bias=False)
-        self.trans5 = nn.Conv2d(in_channels=1024, out_channels=2048, kernel_size=1, bias=False)
+        self.trans1 = nn.Conv2d(in_channels=2208, out_channels=128, kernel_size=1, bias=False)
+        self.trans2 = nn.Conv2d(in_channels=2208, out_channels=256, kernel_size=1, bias=False)
+        self.trans3 = nn.Conv2d(in_channels=2208, out_channels=512, kernel_size=1, bias=False)
+        self.trans4 = nn.Conv2d(in_channels=2208, out_channels=1024, kernel_size=1, bias=False)
+        self.trans5 = nn.Conv2d(in_channels=2208, out_channels=2048, kernel_size=1, bias=False)
 
     def forward(self, x):
         x_dn = self.dense.features(x)
         #print(x_dn.size())
 
-        x_dn = self.trans(x_dn)
-
         #x0_0  = self.conv0_0(x)
-        x0_0 = F.interpolate(x_dn, scale_factor=32, mode='bilinear', align_corners=True)
+        x0_0 = self.trans(F.interpolate(x_dn, scale_factor=32, mode='bilinear', align_corners=True))
         print(x0_0.size())
         #x1_0 = self.conv1_0(self.pool(x0_0))
         x1_0 = self.trans1(F.interpolate(x_dn, scale_factor=16, mode='bilinear', align_corners=True))
