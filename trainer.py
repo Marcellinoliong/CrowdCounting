@@ -99,12 +99,12 @@ class Trainer():
             #loss = (loss1 + loss2 + loss3 + loss4) / 4
             #loss = self.net.build_loss(torch.sqrt(prob), gt_map)
             #loss = self.net.loss
-            pred_map1, pred_map2, pred_map3, pred_map4, pred_map5 = self.net(img, gt_map)
-            loss1 = self.net.build_loss(pred_map1, gt_map)
-            loss2 = self.net.build_loss(pred_map2, gt_map)
-            loss3 = self.net.build_loss(pred_map3, gt_map)
-            loss4 = self.net.build_loss(pred_map4, gt_map)
-            loss5 = self.net.build_loss(pred_map5, gt_map)
+            pred_map = self.net(img, gt_map)
+            loss1 = self.net.build_loss(pred_map[1], gt_map)
+            loss2 = self.net.build_loss(pred_map[2], gt_map)
+            loss3 = self.net.build_loss(pred_map[3], gt_map)
+            loss4 = self.net.build_loss(pred_map[4], gt_map)
+            loss5 = self.net.build_loss(pred_map[5], gt_map)
             loss = loss1 + loss2 + loss3 + loss4 + loss5
             loss.backward()
             self.optimizer.step()
