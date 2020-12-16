@@ -128,7 +128,7 @@ class Nested_UNet_Densenet5(nn.Module):
         output2 = self.final2(x0_2)
         output3 = self.final3(x0_3)
         output4 = self.final4(x0_4)
-        output4 = self.final4(x0_5)
+        output5 = self.final4(x0_5)
         return output1, output2, output3, output4, output5
 
         #else:
