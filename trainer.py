@@ -92,7 +92,6 @@ class Trainer():
 
             self.optimizer.zero_grad()
             pred_map = self.net(img, gt_map)
-            loss = self.net.build_loss(torch.sqrt(prob), gt_map)
             loss = self.net.loss
             
             #loss1 = self.net.build_loss(pred_map[0], gt_map)
