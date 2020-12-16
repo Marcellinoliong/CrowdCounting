@@ -141,13 +141,13 @@ class Trainer():
                 #pred_map = pred_map.data.cpu().numpy()
 
                 pred_maph = self.net.forward(img, gt_map)
-                pred_maph[0] = pred_maph[0].data.cpu().numpy()
-                pred_maph[1] = pred_maph[1].data.cpu().numpy()
-                pred_maph[2] = pred_maph[2].data.cpu().numpy()
-                pred_maph[3] = pred_maph[3].data.cpu().numpy()
-                pred_maph[4] = pred_maph[4].data.cpu().numpy()
+                pred_map1 = pred_maph[0].data.cpu().numpy()
+                pred_map2 = pred_maph[1].data.cpu().numpy()
+                pred_map3 = pred_maph[2].data.cpu().numpy()
+                pred_map4 = pred_maph[3].data.cpu().numpy()
+                pred_map5 = pred_maph[4].data.cpu().numpy()
 
-                pred_map = np.mean(pred_maph[0], pred_maph[1], pred_maph[2], pred_maph[3], pred_maph[4])
+                pred_map = np.mean(pred_map1, pred_map2, pred_map3, pred_map4, pred_map5)
 
                 gt_map = gt_map.data.cpu().numpy()
 
