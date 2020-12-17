@@ -97,7 +97,8 @@ class Nested_UNet_Densenet5(nn.Module):
         #x0_0 = self.trans0(F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True))
 
         #x0_0  = self.conv0_0(x)
-        x0_0 = self.trans0(F.interpolate(x_dn, scale_factor=32, mode='bilinear', align_corners=True))
+        x_dn = self.trans0(x_dn)
+        x0_0 = F.interpolate(x_dn, scale_factor=32, mode='bilinear', align_corners=True)
 
         x1_0 = self.conv1_0(self.pool(x0_0))
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
