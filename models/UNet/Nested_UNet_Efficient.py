@@ -80,7 +80,8 @@ class Nested_UNet_Efficient(nn.Module):
         #)
         #self.dense = models.DenseNet()
 
-        self.Expand2 = nn.Conv2d(in_channels=32, out_channels=128, kernel_size=1, bias=False)
+        self.Expand1 = nn.Conv2d(in_channels=32, out_channels=128, kernel_size=1, bias=False)
+        self.Expand2 = nn.Conv2d(in_channels=32, out_channels=256, kernel_size=1, bias=False)
         self.Expand3 = nn.Conv2d(in_channels=32, out_channels=256, kernel_size=1, bias=False)
         self.Expand4 = nn.Conv2d(in_channels=48, out_channels=filters[4], kernel_size=1, bias=False)
         self.Expand5 = nn.Conv2d(in_channels=24, out_channels=filters[5], kernel_size=1, bias=False)
@@ -112,8 +113,7 @@ class Nested_UNet_Efficient(nn.Module):
         x0_0  = self.conv0_0(x)
         print(x0_0.size())
         #x1_0 = self.conv1_0(self.pool(x0_0))
-        #x1_0 = self.Expand1(x_en)
-        x1_0 = x_en
+        x1_0 = self.Expand1(x_en)
         x1_0 = F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)
         print(x1_0.size())
         #print((F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)).size())
