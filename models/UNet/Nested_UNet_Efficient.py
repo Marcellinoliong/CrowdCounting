@@ -127,6 +127,7 @@ class Nested_UNet_Efficient(nn.Module):
         #x2_0 = self.conv2_0(self.pool(x1_0))
         x2_0 = x_en
         x2_0 = self.Expand2(x_en)
+        x2_0 = F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)
         print(x2_0.size())
         x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, F.interpolate(x1_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
@@ -139,10 +140,8 @@ class Nested_UNet_Efficient(nn.Module):
         
         #x3_0 = self.conv3_0(self.pool(x2_0))
         x3_0 = x_en
-        print(x_en.size())
         x3_0 = self.Expand3(x_en)
-        #print(x_en.size())
-        x3_0 = F.interpolate(x3_0, scale_factor=4, mode='bilinear', align_corners=True)
+        x3_0 = F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True)
         print(x3_0.size())
         x2_1 = self.conv2_1(torch.cat([x2_0, F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_2 = self.conv1_2(torch.cat([x1_0, x1_1, F.interpolate(x2_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
@@ -159,7 +158,6 @@ class Nested_UNet_Efficient(nn.Module):
         
         #x4_0 = self.conv4_0(self.pool(x3_0))
         x4_0 = x_en
-        #print(x_en.size())
         x4_0 = self.Expand4(x_en)
         #print(x4_0.size())
         x4_0 = F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True)
