@@ -162,6 +162,15 @@ class Nested_UNet_Efficient(nn.Module):
         #print(x4_0.size())
         x4_0 = F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True)
         print(x4_0.size())
+        
+        if drop_connect_rate:
+            drop_connect_rate *= float(5) / len(self.res._blocks) # scale drop connect_rate
+        x_en = self.res._blocks[5](x_en, drop_connect_rate=drop_connect_rate)
+        x5_0 = self.Expand5(x_en)
+        #print(x5_0.size())
+        x5_0 = F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True)
+        print(x5_0.size())
+
         x3_1 = self.conv3_1(torch.cat([x3_0, F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x2_2 = self.conv2_2(torch.cat([x2_0, x2_1, F.interpolate(x3_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_3 = self.conv1_3(torch.cat([x1_0, x1_1, x1_2, F.interpolate(x2_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
