@@ -89,7 +89,7 @@ class Nested_UNet_Efficient5(nn.Module):
     def forward(self, x):
         prob = list()
 
-        x_en self.res.extract_features(x)
+        x_en = self.res.extract_features(x)
 
         x0_0 = self.Expand0(x_en)
         x1_0 = self.Expand1(x_en)
