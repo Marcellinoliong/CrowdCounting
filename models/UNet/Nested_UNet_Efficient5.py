@@ -80,12 +80,12 @@ class Nested_UNet_Efficient5(nn.Module):
         #)
         #self.dense = models.DenseNet()
 
-        self.Expand0 = nn.Conv2d(in_channels=32, out_channels=128, kernel_size=1, bias=False)
-        self.Expand1 = nn.Conv2d(in_channels=32, out_channels=128, kernel_size=1, bias=False)
-        self.Expand2 = nn.Conv2d(in_channels=32, out_channels=256, kernel_size=1, bias=False)
-        self.Expand3 = nn.Conv2d(in_channels=32, out_channels=512, kernel_size=1, bias=False)
-        self.Expand4 = nn.Conv2d(in_channels=48, out_channels=1024, kernel_size=1, bias=False)
-        self.Expand5 = nn.Conv2d(in_channels=48, out_channels=2048, kernel_size=1, bias=False)
+        self.Expand0 = nn.Conv2d(in_channels=2560, out_channels=64, kernel_size=1, bias=False)
+        self.Expand1 = nn.Conv2d(in_channels=2560, out_channels=128, kernel_size=1, bias=False)
+        self.Expand2 = nn.Conv2d(in_channels=2560, out_channels=256, kernel_size=1, bias=False)
+        self.Expand3 = nn.Conv2d(in_channels=2560, out_channels=512, kernel_size=1, bias=False)
+        self.Expand4 = nn.Conv2d(in_channels=2560, out_channels=1024, kernel_size=1, bias=False)
+        self.Expand5 = nn.Conv2d(in_channels=2560, out_channels=2048, kernel_size=1, bias=False)
 
     def forward(self, x):
         prob = list()
@@ -94,10 +94,15 @@ class Nested_UNet_Efficient5(nn.Module):
 
         print(x_en.size())
         x0_0 = self.Expand0(x_en)
+        x0_0 = F.interpolate(x0_0, scale_factor=32, mode='bilinear', align_corners=True)]
         x1_0 = self.Expand1(x_en)
+        x1_0 = F.interpolate(x1_0, scale_factor=16, mode='bilinear', align_corners=True)]
         x2_0 = self.Expand2(x_en)
+        x2_0 = F.interpolate(x2_0, scale_factor=8, mode='bilinear', align_corners=True)]
         x3_0 = self.Expand3(x_en)
+        x3_0 = F.interpolate(x3_0, scale_factor=4, mode='bilinear', align_corners=True)]
         x4_0 = self.Expand4(x_en)
+        x4_0 = F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True)]
         x5_0 = self.Expand5(x_en)
 
         print(x0_0.size())
