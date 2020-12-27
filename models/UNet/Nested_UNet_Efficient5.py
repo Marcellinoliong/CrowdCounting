@@ -28,7 +28,7 @@ class conv_block_nested(nn.Module):
 class Nested_UNet_Efficient5(nn.Module):
 
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
-        super(Nested_UNet_Efficient, self).__init__()
+        super(Nested_UNet_Efficient5, self).__init__()
 
         n1 = 64
         filters = [n1, n1 * 2, n1 * 4, n1 * 8, n1 * 16, n1 * 32]
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     import time
 
     x = torch.rand((1, 3, 256, 256))
-    lnet = Nested_UNet_Efficient(3, 1, 'test')
+    lnet = Nested_UNet_Efficient5(3, 1, 'test')
     # calculate model size
     print('    Total params: %.2fMB' % (sum(p.numel() for p in lnet.parameters()) / (1024.0 * 1024) * 4))
     t1 = time.time()
