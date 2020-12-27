@@ -84,7 +84,7 @@ class Nested_UNet_Efficient5(nn.Module):
         self.Expand1 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
         self.Expand2 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
         self.Expand3 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
-        self.Expand4 = nn.Conv2d(in_channels=2560, out_channels=1024, kernel_size=1, bias=False)
+        self.Expand4 = nn.Conv2d(in_channels=2048, out_channels=1024, kernel_size=1, bias=False)
         self.Expand5 = nn.Conv2d(in_channels=2560, out_channels=2048, kernel_size=1, bias=False)
 
     def forward(self, x):
@@ -94,8 +94,8 @@ class Nested_UNet_Efficient5(nn.Module):
 
         #print(x_en.size())
         
-        #x5_0 = self.Expand5(x_en)
-        x4_0 = self.Expand4(F.interpolate(x_en, scale_factor=2, mode='bilinear', align_corners=True))
+        x5_0 = self.Expand5(x_en)
+        x4_0 = self.Expand4(F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True))
         x3_0 = self.Expand3(F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True))
         x2_0 = self.Expand2(F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True))
         x1_0 = self.Expand1(F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True))
@@ -122,11 +122,11 @@ class Nested_UNet_Efficient5(nn.Module):
         x1_3 = self.conv1_3(torch.cat([x1_0, x1_1, x1_2, F.interpolate(x2_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_4 = self.conv0_4(torch.cat([x0_0, x0_1, x0_2, x0_3, F.interpolate(x1_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        #x4_1 = self.conv4_1(torch.cat([x4_0, F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        #x3_2 = self.conv3_2(torch.cat([x3_0, x3_1, F.interpolate(x4_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        #x2_3 = self.conv2_3(torch.cat([x2_0, x2_1, x2_2, F.interpolate(x3_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        #x1_4 = self.conv1_4(torch.cat([x1_0, x1_1, x1_2, x1_3, F.interpolate(x2_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        #x0_5 = self.conv0_5(torch.cat([x0_0, x0_1, x0_2, x0_3, x0_4, F.interpolate(x1_4, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        x4_1 = self.conv4_1(torch.cat([x4_0, F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        x3_2 = self.conv3_2(torch.cat([x3_0, x3_1, F.interpolate(x4_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        x2_3 = self.conv2_3(torch.cat([x2_0, x2_1, x2_2, F.interpolate(x3_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        x1_4 = self.conv1_4(torch.cat([x1_0, x1_1, x1_2, x1_3, F.interpolate(x2_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        x0_5 = self.conv0_5(torch.cat([x0_0, x0_1, x0_2, x0_3, x0_4, F.interpolate(x1_4, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         if self.deep_supervision:
             output1 = self.final1(x0_1)
@@ -136,7 +136,7 @@ class Nested_UNet_Efficient5(nn.Module):
             return (output1 + output2 + output3 + output4)/4
 
         else:
-            output = self.final(x0_4)
+            output = self.final(x0_5)
             return output
             
             

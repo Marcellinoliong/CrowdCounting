@@ -75,7 +75,7 @@ class Nested_UNet_Densenet5(nn.Module):
         #else:
         self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
-        self.dense = models.densenet161(pretrained=True) 
+        self.dense = models.densenet201(pretrained=True) 
 
         #self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
         self.trans0 = nn.Conv2d(in_channels=128, out_channels=64, kernel_size=1, bias=False)
