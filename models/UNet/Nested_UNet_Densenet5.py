@@ -89,15 +89,14 @@ class Nested_UNet_Densenet5(nn.Module):
         x_dn = self.dense.features(x)
         #print(x_dn.size())
 
-        
         x5_0 = self.trans5(x_dn)
         x4_0 = self.trans4(F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True))
         x3_0 = self.trans3(F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True))
         x2_0 = self.trans2(F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True))
         x1_0 = self.trans1(F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True))
-        x0_0 = self.trans0(F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True))
+        #x0_0 = self.trans0(F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True))
 
-        #x0_0  = self.conv0_0(x)
+        x0_0  = self.conv0_0(x)
         #x_dn = self.trans(x_dn)
         #x0_0 = F.interpolate(x_dn, scale_factor=32, mode='bilinear', align_corners=True)
 
