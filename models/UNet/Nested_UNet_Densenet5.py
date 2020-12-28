@@ -30,7 +30,7 @@ class Nested_UNet_Densenet5(nn.Module):
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
         super(Nested_UNet_Densenet5, self).__init__()
 
-        n1 = 64
+        n1 = 128
         filters = [n1, n1 * 2, n1 * 4, n1 * 8, n1 * 16, n1 * 32]
 
         self.deep_supervision = deep_supervision
@@ -75,22 +75,22 @@ class Nested_UNet_Densenet5(nn.Module):
         #else:
         self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
-        self.dense = models.densenet201(pretrained=True) 
+        self.dense = models.densenet161(pretrained=True) 
 
         #self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
-        self.trans0 = nn.Conv2d(in_channels=128, out_channels=64, kernel_size=1, bias=False)
-        self.trans1 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
-        self.trans2 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
-        self.trans3 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
-        self.trans4 = nn.Conv2d(in_channels=2048, out_channels=1024, kernel_size=1, bias=False)
-        self.trans5 = nn.Conv2d(in_channels=1920, out_channels=2048, kernel_size=1, bias=False)
+        self.trans0 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
+        self.trans1 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
+        self.trans2 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
+        self.trans3 = nn.Conv2d(in_channels=2048, out_channels=1024, kernel_size=1, bias=False)
+        self.trans4 = nn.Conv2d(in_channels=2208, out_channels=2048, kernel_size=1, bias=False)
+        self.trans5 = nn.Conv2d(in_channels=2208, out_channels=2048, kernel_size=1, bias=False)
 
     def forward(self, x):
         x_dn = self.dense.features(x)
         #print(x_dn.size())
 
-        x5_0 = self.trans5(x_dn)
-        x4_0 = self.trans4(F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True))
+        #x5_0 = self.trans5(x_dn)
+        x4_0 = self.trans4(F.interpolate(x_dn, scale_factor=2, mode='bilinear', align_corners=True))
         x3_0 = self.trans3(F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True))
         x2_0 = self.trans2(F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True))
         x1_0 = self.trans1(F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True))
@@ -119,11 +119,11 @@ class Nested_UNet_Densenet5(nn.Module):
         x0_4 = self.conv0_4(torch.cat([x0_0, x0_1, x0_2, x0_3, F.interpolate(x1_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         
         #x5_0 = self.conv5_0(self.pool(x4_0))
-        x4_1 = self.conv4_1(torch.cat([x4_0, F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        x3_2 = self.conv3_2(torch.cat([x3_0, x3_1, F.interpolate(x4_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        x2_3 = self.conv2_3(torch.cat([x2_0, x2_1, x2_2, F.interpolate(x3_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        x1_4 = self.conv1_4(torch.cat([x1_0, x1_1, x1_2, x1_3, F.interpolate(x2_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        x0_5 = self.conv0_5(torch.cat([x0_0, x0_1, x0_2, x0_3, x0_4, F.interpolate(x1_4, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        #x4_1 = self.conv4_1(torch.cat([x4_0, F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        #x3_2 = self.conv3_2(torch.cat([x3_0, x3_1, F.interpolate(x4_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        #x2_3 = self.conv2_3(torch.cat([x2_0, x2_1, x2_2, F.interpolate(x3_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        #x1_4 = self.conv1_4(torch.cat([x1_0, x1_1, x1_2, x1_3, F.interpolate(x2_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        #x0_5 = self.conv0_5(torch.cat([x0_0, x0_1, x0_2, x0_3, x0_4, F.interpolate(x1_4, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         #if self.deep_supervision:
         #    output1 = self.final1(x0_1)
@@ -133,7 +133,7 @@ class Nested_UNet_Densenet5(nn.Module):
         #    output5 = self.final5(x0_5)
         #    return output1, output2, output3, output4, output5
         #else:
-        output = self.final(x0_5)
+        output = self.final(x0_4)
         return output
             
 if __name__ == '__main__':
