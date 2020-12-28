@@ -30,7 +30,7 @@ class Nested_UNet_Densenet5(nn.Module):
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
         super(Nested_UNet_Densenet5, self).__init__()
 
-        n1 = 128
+        n1 = 96
         filters = [n1, n1 * 2, n1 * 4, n1 * 8, n1 * 16, n1 * 32]
 
         self.deep_supervision = deep_supervision
