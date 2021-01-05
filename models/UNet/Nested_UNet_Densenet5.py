@@ -30,7 +30,7 @@ class Nested_UNet_Densenet5(nn.Module):
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
         super(Nested_UNet_Densenet5, self).__init__()
 
-        n1 = 96
+        n1 = 64
         filters = [n1, n1 * 2, n1 * 4, n1 * 8, n1 * 16, n1 * 32]
 
         self.deep_supervision = deep_supervision
@@ -78,12 +78,12 @@ class Nested_UNet_Densenet5(nn.Module):
         self.dense = models.densenet161(pretrained=True) 
 
         #self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
-        self.trans0 = nn.Conv2d(in_channels=192, out_channels=96, kernel_size=1, bias=False)
-        self.trans1 = nn.Conv2d(in_channels=284, out_channels=192, kernel_size=1, bias=False)
-        self.trans2 = nn.Conv2d(in_channels=568, out_channels=284, kernel_size=1, bias=False)
-        self.trans3 = nn.Conv2d(in_channels=1136, out_channels=568, kernel_size=1, bias=False)
-        self.trans4 = nn.Conv2d(in_channels=2272, out_channels=1136, kernel_size=1, bias=False)
-        self.trans5 = nn.Conv2d(in_channels=2208, out_channels=2272, kernel_size=1, bias=False)
+        self.trans0 = nn.Conv2d(in_channels=128, out_channels=64, kernel_size=1, bias=False)
+        self.trans1 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
+        self.trans2 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
+        self.trans3 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
+        self.trans4 = nn.Conv2d(in_channels=2048, out_channels=1024, kernel_size=1, bias=False)
+        self.trans5 = nn.Conv2d(in_channels=2208, out_channels=2048, kernel_size=1, bias=False)
 
     def forward(self, x):
         x_dn = self.dense.features(x)
