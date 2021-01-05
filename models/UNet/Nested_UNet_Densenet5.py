@@ -90,7 +90,7 @@ class Nested_UNet_Densenet5(nn.Module):
         #print(x_dn.size())
 
         x5_0 = self.trans5(x_dn)
-        x4_0 = self.trans4(F.interpolate(x_dn, scale_factor=2, mode='bilinear', align_corners=True))
+        x4_0 = self.trans4(F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True))
         x3_0 = self.trans3(F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True))
         x2_0 = self.trans2(F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True))
         x1_0 = self.trans1(F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True))
