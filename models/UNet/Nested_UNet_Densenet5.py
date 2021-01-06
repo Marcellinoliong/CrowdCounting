@@ -25,6 +25,27 @@ class conv_block_nested(nn.Module):
 
         return output
 
+class conv_block_trans(nn.Module):
+
+    def __init__(self, in_ch, mid_ch, out_ch):
+        super(conv_block_nested, self).__init__()
+        self.activation = nn.ReLU(inplace=True)
+        self.conv1 = nn.Conv2d(in_ch, mid_ch, kernel_size=2, padding=1, stride=1, bias=True)
+        self.bn1 = nn.BatchNorm2d(mid_ch)
+        self.conv2 = nn.Conv2d(mid_ch, out_ch, kernel_size=2, padding=1, stride=1, bias=True)
+        self.bn2 = nn.BatchNorm2d(out_ch)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.activation(x)
+
+        x = self.conv2(x)
+        x = self.bn2(x)
+        output = self.activation(x)
+
+        return output
+
 class Nested_UNet_Densenet5(nn.Module):
 
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
@@ -78,12 +99,19 @@ class Nested_UNet_Densenet5(nn.Module):
         self.dense = models.densenet161(pretrained=True) 
 
         #self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
-        self.trans0 = nn.Conv2d(in_channels=128, out_channels=64, kernel_size=1, bias=False)
-        self.trans1 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
-        self.trans2 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
-        self.trans3 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
-        self.trans4 = nn.Conv2d(in_channels=2048, out_channels=1024, kernel_size=1, bias=False)
-        self.trans5 = nn.Conv2d(in_channels=2208, out_channels=2048, kernel_size=1, bias=False)
+        #self.trans0 = nn.Conv2d(in_channels=128, out_channels=64, kernel_size=1, bias=False)
+        #self.trans1 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
+        #self.trans2 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
+        #self.trans3 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
+        #self.trans4 = nn.Conv2d(in_channels=2048, out_channels=1024, kernel_size=1, bias=False)
+        #self.trans5 = nn.Conv2d(in_channels=2208, out_channels=2048, kernel_size=1, bias=False)
+
+        self.trans0 = conv_block_trans(128, 64, 64)
+        self.trans1 = conv_block_trans(256, 128, 128)
+        self.trans2 = conv_block_trans(512, 256, 256)
+        self.trans3 = conv_block_trans(1024, 512, 512)
+        self.trans4 = conv_block_trans(2048, 1024, 1024)
+        self.trans5 = conv_block_trans(2208, 2048, 2048)
 
     def forward(self, x):
         x_dn = self.dense.features(x)
