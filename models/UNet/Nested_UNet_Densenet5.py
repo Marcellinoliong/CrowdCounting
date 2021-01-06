@@ -48,7 +48,7 @@ class conv_block_trans(nn.Module):
 
 class Nested_UNet_Densenet5(nn.Module):
 
-    def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=False):
+    def __init__(self, in_ch=3, out_ch=1,  pretrained=True):
         super(Nested_UNet_Densenet5, self).__init__()
 
         n1 = 64
@@ -87,13 +87,6 @@ class Nested_UNet_Densenet5(nn.Module):
         
         self.conv0_5 = conv_block_nested(filters[0]*5 + filters[1], filters[0], filters[0])
 
-        #if self.deep_supervision:
-        #    self.final1 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
-        #    self.final2 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
-        #    self.final3 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
-        #    self.final4 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
-        #    self.final5 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
-        #else:
         self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
         self.dense = models.densenet161(pretrained=True) 
@@ -158,14 +151,6 @@ class Nested_UNet_Densenet5(nn.Module):
         x1_4 = self.conv1_4(torch.cat([x1_0, x1_1, x1_2, x1_3, F.interpolate(x2_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_5 = self.conv0_5(torch.cat([x0_0, x0_1, x0_2, x0_3, x0_4, F.interpolate(x1_4, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        #if self.deep_supervision:
-        #    output1 = self.final1(x0_1)
-        #    output2 = self.final2(x0_2)
-        #    output3 = self.final3(x0_3)
-        #    output4 = self.final4(x0_4)
-        #    output5 = self.final5(x0_5)
-        #    return output1, output2, output3, output4, output5
-        #else:
         output = self.final(x0_5)
         return output
             
@@ -173,7 +158,7 @@ if __name__ == '__main__':
     import time
 
     x = torch.rand((1, 3, 256, 256))
-    lnet = Nested_UNet_Densenet(3, 1, 'test')
+    lnet = Nested_UNet_Densenet5(3, 1, 'test')
     # calculate model size
     print('    Total params: %.2fMB' % (sum(p.numel() for p in lnet.parameters()) / (1024.0 * 1024) * 4))
     t1 = time.time()
