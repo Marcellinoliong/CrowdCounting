@@ -109,10 +109,10 @@ class Unet_2D(nn.Module):
         x7 = self.down6(x6)
         x = self.up1(x7, x6)
         x = self.up2(x, x5)
-        x = self.up2(x, x4)
-        x = self.up2(x, x3)
-        x = self.up3(x, x2)
-        x = self.up4(x, x1)
+        x = self.up3(x, x4)
+        x = self.up4(x, x3)
+        x = self.up5(x, x2)
+        x = self.up6(x, x1)
         logits = self.outc(x)
         return logits
 
