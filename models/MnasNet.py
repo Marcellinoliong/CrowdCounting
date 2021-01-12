@@ -138,6 +138,7 @@ if __name__ == '__main__':
     #y = net(x_image)
 
     # calculate model size
+    print(f'    Param: {(sum(p.numel() for p in net.parameters())):,}')
     print('    Total params: %.2fMB' % (sum(p.numel() for p in net.parameters()) / (1024.0 * 1024) * 4))
     t1 = time.time()
     ##test for its speed on cpu

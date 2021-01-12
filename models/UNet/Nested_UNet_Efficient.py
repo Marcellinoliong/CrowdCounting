@@ -87,7 +87,6 @@ class Nested_UNet_Efficient(nn.Module):
         self.Expand5 = nn.Conv2d(in_channels=48, out_channels=2048, kernel_size=1, bias=False)
 
     def forward(self, x):
-        prob = list()
         x_en = self.res._swish(self.res._bn0(self.res._conv_stem(x)))
 
         #layer 1 dan 2

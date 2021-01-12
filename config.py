@@ -9,7 +9,7 @@ cfg = __C
 
 #------------------------------TRAIN------------------------
 __C.SEED = 3035 # random seed,  for reporduction
-__C.DATASET = 'SHHB' # dataset selection: GCC, SHHA, SHHB, UCF50, QNRF, WE
+__C.DATASET = 'UCF50' # dataset selection: GCC, SHHA, SHHB, UCF50, QNRF, WE
 
 if __C.DATASET == 'UCF50':# only for UCF50
 	from datasets.UCF50.setting import cfg_data
@@ -19,7 +19,7 @@ if __C.DATASET == 'GCC':# only for GCC
 	from datasets.GCC.setting import cfg_datac
 	__C.VAL_MODE = cfg_data.VAL_MODE 
 
-__C.NET = 'UNet' # net selection: MCNN, VGG, VGG_DECODER, Res50, CSRNet, SANet, UNet++, UNet, UNet3P
+__C.NET = 'MnasNet' # net selection: MCNN, VGG, VGG_DECODER, Res50, CSRNet, SANet, UNet++, UNet, UNet3P, MnasNet
 
 __C.PRE_GCC = False # use the pretrained model on GCC dataset
 __C.PRE_GCC_MODEL = '' # path to model
@@ -31,7 +31,7 @@ __C.LR = 1e-5 # learning rate
 __C.LR_DECAY = 0.995 # decay rate
 __C.LR_DECAY_START = -1 # when training epoch is more than it, the learning rate will be begin to decay
 __C.NUM_EPOCH_LR_DECAY = 1 # decay frequency
-__C.MAX_EPOCH = 300
+__C.MAX_EPOCH = 200
 
 # multi-task learning weights, no use for single model, such as MCNN, VGG, VGG_DECODER, Res50, CSRNet, and so on
 
