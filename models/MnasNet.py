@@ -112,6 +112,7 @@ class MnasNet(nn.Module):
         x = self.features(x)
         x = x.view(-1, self.last_channel)
         x = self.classifier(x)
+        print(x.size())
         return x
 
     def _initialize_weights(self):
