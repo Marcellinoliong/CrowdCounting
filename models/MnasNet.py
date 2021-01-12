@@ -111,7 +111,7 @@ class MnasNet(nn.Module):
     def forward(self, x):
         x = self.features(x)
         x = x.view(-1, self.last_channel)
-        #x = self.classifier(x)
+        x = self.classifier(x)
         print(x.size())
         return x
 
