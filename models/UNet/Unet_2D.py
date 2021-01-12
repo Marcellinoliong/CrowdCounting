@@ -77,7 +77,7 @@ class OutConv(nn.Module):
 
 
 class Unet_2D(nn.Module):
-    def __init__(self, n_channels, n_classes, bilinear=True):
+    def __init__(self, n_channels=3, n_classes=1, bilinear=True):
         super(Unet_2D, self).__init__()
         self.n_channels = n_channels
         self.n_classes = n_classes
