@@ -48,7 +48,7 @@ elif data_mode is 'UCSD':
 
 #------------Prepare Trainer------------
 net = cfg.NET
-if net in ['MCNN', 'AlexNet', 'VGG', 'VGG_DECODER', 'Res50', 'Res101', 'CSRNet','Res101_SFCN', 'UNet++', 'UNet', 'UNet3P', 'MnasNet']:
+if net in ['MCNN', 'AlexNet', 'VGG', 'VGG_DECODER', 'Res50', 'Res101', 'CSRNet','Res101_SFCN', 'UNet++', 'UNet', 'UNet3P', 'MnasNet', 'UNet2D']:
     from trainer import Trainer
 elif net in ['SANet']: 
     from trainer_for_M2TCC import Trainer # double losses but signle output
