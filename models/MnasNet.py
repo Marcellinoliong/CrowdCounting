@@ -61,7 +61,7 @@ class InvertedResidual(nn.Module):
 
 
 class MnasNet(nn.Module):
-    def __init__(self, n_class=1000, input_size=224, width_mult=1.):
+    def __init__(self, n_class=768, input_size=224, width_mult=1.):
         super(MnasNet, self).__init__()
 
         # setting of inverted residual blocks
@@ -111,7 +111,7 @@ class MnasNet(nn.Module):
     def forward(self, x):
         x = self.features(x)
         x = x.view(-1, self.last_channel)
-        x = self.classifier(x)
+        #x = self.classifier(x)
         print(x.size())
         return x
 
