@@ -33,8 +33,30 @@ class CrowdCounter(nn.Module):
             from .UNet.Unet_2D import Unet_2D as net
         elif model_name == 'MnasNet':
             from .MnasNet import MnasNet as net
+        elif model_name == 'BiSeNet':
+            from .mobile.BiSeNet import BiSeNet as net
+        elif model_name == 'Basenet':
+            from .mobile.Basenet import Basenet as net
+        elif model_name == 'ERFNet':
+            from .mobile.ERFnet import Net as net
+        elif model_name == 'EDANet':
+            from .mobile.EDANet import EDANet as net
+        elif model_name == 'ENet':
+            from .mobile.Enet import ENet as net
+        elif model_name == 'ESPNet':
+            from .mobile.Espnet import ESPNet as net
+        elif model_name == 'mobilenet':
+            from .mobile.mobilenet import mbv2 as net
 
-        self.CCN = net()
+        if model_name == 'ERFNet':
+            self.CCN = net(num_classes=1)
+        elif model_name == 'ENet':
+            self.CCN = net(num_classes=1)
+        elif model_name == 'mobilenet':
+            self.CCN = net(num_classes=1)
+        else:
+            self.CCN = net()
+
         if len(gpus)>1:
             self.CCN = torch.nn.DataParallel(self.CCN, device_ids=gpus).cuda()
         else:

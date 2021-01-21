@@ -19,7 +19,8 @@ if __C.DATASET == 'GCC':# only for GCC
 	from datasets.GCC.setting import cfg_datac
 	__C.VAL_MODE = cfg_data.VAL_MODE 
 
-__C.NET = 'UNet2D' # net selection: MCNN, VGG, VGG_DECODER, Res50, CSRNet, SANet, UNet++, UNet, UNet3P, MnasNet, UNet2D
+__C.NET = 'UNet' # net selection: MCNN, VGG, VGG_DECODER, Res50, CSRNet, SANet, UNet++, UNet, UNet3P, MnasNet, UNet2D, 
+	#BiSeNet, Basenet, ERFNet, EDANet, ENet, ESPNet, mobilenet
 
 __C.PRE_GCC = False # use the pretrained model on GCC dataset
 __C.PRE_GCC_MODEL = '' # path to model

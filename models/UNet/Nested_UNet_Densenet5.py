@@ -149,7 +149,7 @@ class Nested_UNet_Densenet5(nn.Module):
 
         self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
-        self.dense = models.densenet161(pretrained=True) 
+        #self.dense = models.densenet161(pretrained=True) 
 
         self.vgg = VGG()
         self.load_vgg()
