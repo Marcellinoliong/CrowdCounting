@@ -175,16 +175,12 @@ class Nested_UNet_Densenet5(nn.Module):
         #x_dn = self.dense.features(x)
         #print(x_dn.size())
 
-        print("Start VGG")
         input = self.vgg(x)
         #x_dn = self.transspm(input)
-        print("Start SPM")
         x_dn = self.spm(*input)
-
 
         conv2_2, conv3_3, conv4_4, conv5_4 = x_dn
         x_out = torch.cat([conv5_4, conv4_4], 1)
-        print("Start Unet")
 
         #x5_0 = self.trans5(x_dn)
         #x5_0 = x_dn
@@ -243,7 +239,6 @@ class Nested_UNet_Densenet5(nn.Module):
             new_dict['conv' + new_name[i] + '.conv.bias'] = \
                 state_dict['features.' + str(old_name[i]) + '.bias']
         self.vgg.load_state_dict(new_dict, strict=False)
-        print("VGG Loaded")
 
 class VGG(nn.Module):
     def __init__(self):
