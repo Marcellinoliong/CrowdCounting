@@ -206,8 +206,8 @@ class Trainer():
                     
                     losses.update(self.net.loss.item())
 
-                    maet = math.floor((abs(gt_count-pred_cnt))
-                    mset = math.floor((gt_count-pred_cnt))*math.floor((gt_count-pred_cnt))
+                    maet = math.floor((abs(gt_count-pred_cnt)
+                    mset = math.floor((gt_count-pred_cnt)) * math.floor((gt_count-pred_cnt))
 
                     maes.update(maet)
                     mses.update(mset)
