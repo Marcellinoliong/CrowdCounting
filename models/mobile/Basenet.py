@@ -79,8 +79,7 @@ class Basenet(nn.Module):
 
         input = self.vgg(x)
         x = self.spm(*input)
-
-
+        
         conv2_2, conv3_3, conv4_4, conv5_4 = x
         x = torch.cat([conv5_4, conv4_4], 1)
 
