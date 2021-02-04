@@ -125,27 +125,27 @@ class Nested_UNet_Densenet5(nn.Module):
         self.conv2_0 = conv_block_nested(filters[1], filters[2], filters[2])
         self.conv3_0 = conv_block_nested(filters[2], filters[3], filters[3])
         self.conv4_0 = conv_block_nested(filters[3], filters[4], filters[4])
-        self.conv5_0 = conv_block_nested(filters[4], filters[5], filters[5])
+        #self.conv5_0 = conv_block_nested(filters[4], filters[5], filters[5])
 
         self.conv0_1 = conv_block_nested(filters[0] + filters[1], filters[0], filters[0])
         self.conv1_1 = conv_block_nested(filters[1] + filters[2], filters[1], filters[1])
         self.conv2_1 = conv_block_nested(filters[2] + filters[3], filters[2], filters[2])
         self.conv3_1 = conv_block_nested(filters[3] + filters[4], filters[3], filters[3])
-        self.conv4_1 = conv_block_nested(filters[4] + filters[5], filters[4], filters[4])
+        #self.conv4_1 = conv_block_nested(filters[4] + filters[5], filters[4], filters[4])
 
         self.conv0_2 = conv_block_nested(filters[0]*2 + filters[1], filters[0], filters[0])
         self.conv1_2 = conv_block_nested(filters[1]*2 + filters[2], filters[1], filters[1])
         self.conv2_2 = conv_block_nested(filters[2]*2 + filters[3], filters[2], filters[2])
-        self.conv3_2 = conv_block_nested(filters[3]*2 + filters[4], filters[3], filters[3])
+        #self.conv3_2 = conv_block_nested(filters[3]*2 + filters[4], filters[3], filters[3])
 
         self.conv0_3 = conv_block_nested(filters[0]*3 + filters[1], filters[0], filters[0])
         self.conv1_3 = conv_block_nested(filters[1]*3 + filters[2], filters[1], filters[1])
-        self.conv2_3 = conv_block_nested(filters[2]*3 + filters[3], filters[2], filters[2])
+        #self.conv2_3 = conv_block_nested(filters[2]*3 + filters[3], filters[2], filters[2])
 
         self.conv0_4 = conv_block_nested(filters[0]*4 + filters[1], filters[0], filters[0])
-        self.conv1_4 = conv_block_nested(filters[1]*4 + filters[2], filters[1], filters[1])
+        #self.conv1_4 = conv_block_nested(filters[1]*4 + filters[2], filters[1], filters[1])
         
-        self.conv0_5 = conv_block_nested(filters[0]*5 + filters[1], filters[0], filters[0])
+        #self.conv0_5 = conv_block_nested(filters[0]*5 + filters[1], filters[0], filters[0])
 
         self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
@@ -155,13 +155,13 @@ class Nested_UNet_Densenet5(nn.Module):
         self.load_vgg()
         self.spm = ScalePyramidModule()
 
-        self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
+        #self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
         self.trans0 = nn.Conv2d(in_channels=896, out_channels=64, kernel_size=1, bias=False)
-        self.trans1 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
-        self.trans2 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
-        self.trans3 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
-        self.trans4 = nn.Conv2d(in_channels=896, out_channels=1024, kernel_size=1, bias=False)
-        self.trans5 = nn.Conv2d(in_channels=2208, out_channels=2048, kernel_size=1, bias=False)
+        #self.trans1 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
+        #self.trans2 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
+        #self.trans3 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
+        #self.trans4 = nn.Conv2d(in_channels=896, out_channels=1024, kernel_size=1, bias=False)
+        #self.trans5 = nn.Conv2d(in_channels=2208, out_channels=2048, kernel_size=1, bias=False)
 
         #self.trans0 = conv_block_trans(128, 64, 64)
         #self.trans1 = conv_block_trans(256, 128, 128)
@@ -217,14 +217,14 @@ class Nested_UNet_Densenet5(nn.Module):
         x2_2 = self.conv2_2(torch.cat([x2_0, x2_1, F.interpolate(x3_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_3 = self.conv1_3(torch.cat([x1_0, x1_1, x1_2, F.interpolate(x2_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_4 = self.conv0_4(torch.cat([x0_0, x0_1, x0_2, x0_3, F.interpolate(x1_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        
-        #x5_0 = self.conv5_0(self.pool(x4_0))
-        #xx4_1 = self.conv4_1(torch.cat([x4_0, F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        #xx3_2 = self.conv3_2(torch.cat([x3_0, x3_1, F.interpolate(x4_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        #xx2_3 = self.conv2_3(torch.cat([x2_0, x2_1, x2_2, F.interpolate(x3_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        #xx1_4 = self.conv1_4(torch.cat([x1_0, x1_1, x1_2, x1_3, F.interpolate(x2_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-        #xx0_5 = self.conv0_5(torch.cat([x0_0, x0_1, x0_2, x0_3, x0_4, F.interpolate(x1_4, scale_factor=2, mode='bilinear', align_corners=True)], 1))
-
+        '''
+        x5_0 = self.conv5_0(self.pool(x4_0))
+        x4_1 = self.conv4_1(torch.cat([x4_0, F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        x3_2 = self.conv3_2(torch.cat([x3_0, x3_1, F.interpolate(x4_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        x2_3 = self.conv2_3(torch.cat([x2_0, x2_1, x2_2, F.interpolate(x3_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        x1_4 = self.conv1_4(torch.cat([x1_0, x1_1, x1_2, x1_3, F.interpolate(x2_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        x0_5 = self.conv0_5(torch.cat([x0_0, x0_1, x0_2, x0_3, x0_4, F.interpolate(x1_4, scale_factor=2, mode='bilinear', align_corners=True)], 1))
+        '''
         output = self.final(x0_4)
         return output
 
@@ -291,7 +291,7 @@ class VGG(nn.Module):
         conv5_4 = self.conv5_4(input)
         return conv2_2, conv3_4, conv4_4, conv5_4
 
-
+'''
 class BackEnd(nn.Module):
     def __init__(self):
         super(BackEnd, self).__init__()
@@ -325,6 +325,7 @@ class BackEnd(nn.Module):
         input = self.conv7(input)
 
         return input
+'''
 
 
 class BaseConv(nn.Module):

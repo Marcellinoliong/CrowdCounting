@@ -26,13 +26,11 @@ class conv_block_nested(nn.Module):
 
 class Nested_UNet(nn.Module):
 
-    def __init__(self, in_ch=3, out_ch=1,  pretrained=True, deep_supervision=True):
+    def __init__(self, in_ch=3, out_ch=1,  pretrained=True):
         super(Nested_UNet, self).__init__()
 
         n1 = 64
         filters = [n1, n1 * 2, n1 * 4, n1 * 8, n1 * 16]
-
-        self.deep_supervision = deep_supervision
 
         self.activation = nn.ReLU(inplace=True)
 
@@ -59,13 +57,7 @@ class Nested_UNet(nn.Module):
 
         self.conv0_4 = conv_block_nested(filters[0]*4 + filters[1], filters[0], filters[0])
 
-        if self.deep_supervision:
-            self.final1 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
-            self.final2 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
-            self.final3 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
-            self.final4 = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
-        else:
-            self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
+        self.final = nn.Sequential(nn.Conv2d(filters[0], out_ch, kernel_size=1), self.activation)
 
         #self.res = EfficientNet.from_pretrained('efficientnet-b7')
         #self.res.in_channels = 64
@@ -95,23 +87,16 @@ class Nested_UNet(nn.Module):
         x1_3 = self.conv1_3(torch.cat([x1_0, x1_1, x1_2, F.interpolate(x2_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_4 = self.conv0_4(torch.cat([x0_0, x0_1, x0_2, x0_3, F.interpolate(x1_3, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        if self.deep_supervision:
-            output1 = self.final1(x0_1)
-            output2 = self.final2(x0_2)
-            output3 = self.final3(x0_3)
-            output4 = self.final4(x0_4)
-            return (output1 + output2 + output3 + output4)/4
-
-        else:
-            output = self.final(x0_4)
-            return output
+        output = self.final(x0_4)
+        return output
 
 if __name__ == '__main__':
     import time
 
-    x = torch.rand((1, 3, 256, 256))
+    x = torch.rand((1, 3, 576,768))
     lnet = Nested_UNet(3, 1, 'test')
     # calculate model size
+    print(f'    Param: {(sum(p.numel() for p in lnet.parameters())):,}')
     print('    Total params: %.2fMB' % (sum(p.numel() for p in lnet.parameters()) / (1024.0 * 1024) * 4))
     t1 = time.time()
     ##test for its speed on cpu
