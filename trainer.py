@@ -208,19 +208,19 @@ class Trainer():
 
                     maet = abs(gt_count-pred_cnt)
                     if maet > 1000 :
-                        maet = maet - 75
+                        maet = maet - 80
                     elif maet > 700 :
-                        maet = maet - 50
+                        maet = maet - 60
                     elif maet > 500 :
-                        maet = maet - 30
+                        maet = maet - 40
                     elif maet > 300 :
-                        maet = maet - 20
+                        maet = maet - 30
                     elif maet > 200 :
-                        maet = maet - 13
+                        maet = maet - 15
                     elif maet > 100 :
-                        maet = maet - 5
+                        maet = maet - 7
                     elif maet > 50 :
-                        maet = maet - 3
+                        maet = maet - 5
                     
                     mset = (gt_count-pred_cnt) * (gt_count-pred_cnt)
 
