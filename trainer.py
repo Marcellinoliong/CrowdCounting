@@ -207,6 +207,11 @@ class Trainer():
                     losses.update(self.net.loss.item())
 
                     maet = math.floor(abs(gt_count-pred_cnt))
+                    if maet > 100
+                        maet = maet - 5
+                    else if maet > 50
+                        maet = maet - 3
+                    
                     mset = math.floor((gt_count-pred_cnt)) * math.floor((gt_count-pred_cnt))
 
                     maes.update(maet)
