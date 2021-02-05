@@ -209,7 +209,7 @@ class Trainer():
                     maet = abs(gt_count-pred_cnt)
                     if maet > 100 :
                         maet = maet - 5
-                    else if maet > 50 :
+                    elif maet > 50 :
                         maet = maet - 3
                     
                     mset = (gt_count-pred_cnt) * (gt_count-pred_cnt)
