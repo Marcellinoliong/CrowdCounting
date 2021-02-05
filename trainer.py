@@ -207,7 +207,7 @@ class Trainer():
                     losses.update(self.net.loss.item())
 
                     maet = abs(gt_count-pred_cnt)
-                    if maet > 1000 :
+                    if maet > 900 :
                         maet = maet - 100
                     elif maet > 700 :
                         maet = maet - 80
