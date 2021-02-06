@@ -2,9 +2,9 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
+from .sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
 from torch.utils import model_zoo
-from contextual_layer import ContextualModule
+from .contextual_layer import ContextualModule
 
 class _ASPPModule(nn.Module):
     def __init__(self, inplanes, planes, kernel_size, padding, dilation, BatchNorm):
