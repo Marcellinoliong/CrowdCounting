@@ -117,14 +117,21 @@ class ASPP(nn.Module):
 class ScalePyramidModule(nn.Module):
     def __init__(self):
         super(ScalePyramidModule, self).__init__()
-        self.assp = ASPP(512, output_stride=16, BatchNorm=SynchronizedBatchNorm2d)
+        self.assp = ASPP(512, BatchNorm=None)
         self.can = ContextualModule(512, 512)
+        self.reg_layer = nn.Sequential(
+            nn.Conv2d(512, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 128, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True)
+        )
         
     def forward(self, *input):
         conv2_2, conv3_3, conv4_3, conv5_3 = input
         
         conv4_3 = self.can(conv4_3)
-        conv5_3 = self.assp(conv5_3)
+        conv5_3 = torch.cat([F.upsample_bilinear(self.assp(conv5_3), scale_factor=2), 
+                    self.reg_layer(F.upsample_bilinear(conv5_3, scale_factor=2))], 1)
         
         return conv2_2, conv3_3, conv4_3, conv5_3
 

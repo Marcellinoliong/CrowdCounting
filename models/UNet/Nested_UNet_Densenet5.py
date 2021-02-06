@@ -143,7 +143,7 @@ class conv_block_trans(nn.Module):
         output = self.activation(x)
 
         return output
-        
+
 class Nested_UNet_Densenet5(nn.Module):
 
     def __init__(self, in_ch=3, out_ch=1,  pretrained=True):
@@ -231,7 +231,7 @@ class Nested_UNet_Densenet5(nn.Module):
         #x2_0 = self.trans2(x3_0)
         #x1_0 = self.trans1(x2_0)
         #x0_0 = self.trans0(F.interpolate(x_out, scale_factor=8, mode='bilinear', align_corners=True))
-        x0_0 = self.trans0(self.upsample(conv2_2))
+        x0_0 = self.trans0(self.upsample(conv5_3))
         #x4_0 = self.trans4(F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True))
         #x3_0 = self.trans3(F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True))
         #x2_0 = self.trans2(F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True))
