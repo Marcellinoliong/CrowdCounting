@@ -93,7 +93,7 @@ class ASPP(nn.Module):
 class ScalePyramidModule(nn.Module):
     def __init__(self):
         super(ScalePyramidModule, self).__init__()
-        self.assp = ASPP(512, output_stride=16, BatchNorm=None)
+        self.assp = ASPP(512, output_stride=16, BatchNorm=SynchronizedBatchNorm2d)
         self.can = ContextualModule(512, 512)
         self.reg_layer = nn.Sequential(
             nn.Conv2d(512, 256, kernel_size=3, padding=1),
