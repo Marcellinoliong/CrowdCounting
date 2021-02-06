@@ -4,6 +4,7 @@ import torch.nn.functional as F
 from torchvision import models
 from collections import OrderedDict
 from .contextual_layer import ContextualModule
+from .sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
 from torch.utils import model_zoo
 
 class conv_block_nested(nn.Module):
