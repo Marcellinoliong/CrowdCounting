@@ -2,9 +2,9 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from .sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
+from sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
 from torch.utils import model_zoo
-from .contextual_layer import ContextualModule
+from contextual_layer import ContextualModule
 
 class _ASPPModule(nn.Module):
     def __init__(self, inplanes, planes, kernel_size, padding, dilation, BatchNorm):
@@ -95,61 +95,14 @@ class ScalePyramidModule(nn.Module):
         super(ScalePyramidModule, self).__init__()
         self.assp = ASPP(512, output_stride=16, BatchNorm=SynchronizedBatchNorm2d)
         self.can = ContextualModule(512, 512)
-        self.reg_layer = nn.Sequential(
-            nn.Conv2d(512, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 128, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True)
-        )
         
     def forward(self, *input):
         conv2_2, conv3_3, conv4_3, conv5_3 = input
         
         conv4_3 = self.can(conv4_3)
-        conv5_3 = torch.cat([F.upsample_bilinear(self.assp(conv5_3), scale_factor=2), 
-                    self.reg_layer(F.upsample_bilinear(conv5_3, scale_factor=2))], 1)
+        conv5_3 = self.assp(conv5_3)
         
         return conv2_2, conv3_3, conv4_3, conv5_3
-
-class conv_block_nested(nn.Module):
-    def __init__(self, in_ch, mid_ch, out_ch):
-        super(conv_block_nested, self).__init__()
-        self.activation = nn.ReLU(inplace=True)
-        self.conv1 = nn.Conv2d(in_ch, mid_ch, kernel_size=3, padding=1, stride=1, bias=True)
-        self.bn1 = nn.BatchNorm2d(mid_ch)
-        self.conv2 = nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1, stride=1, bias=True)
-        self.bn2 = nn.BatchNorm2d(out_ch)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.activation(x)
-
-        x = self.conv2(x)
-        x = self.bn2(x)
-        output = self.activation(x)
-
-        return output
-
-class conv_block_trans(nn.Module):
-    def __init__(self, in_ch, mid_ch, out_ch):
-        super(conv_block_trans, self).__init__()
-        self.activation = nn.ReLU(inplace=True)
-        self.conv1 = nn.Conv2d(in_ch, mid_ch, kernel_size=2, padding=1, stride=1, bias=True)
-        self.bn1 = nn.BatchNorm2d(mid_ch)
-        self.conv2 = nn.Conv2d(mid_ch, out_ch, kernel_size=2, padding=1, stride=1, bias=True)
-        self.bn2 = nn.BatchNorm2d(out_ch)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.activation(x)
-
-        x = self.conv2(x)
-        x = self.bn2(x)
-        output = self.activation(x)
-
-        return output
 
 class Nested_UNet_Densenet5(nn.Module):
 
@@ -238,7 +191,7 @@ class Nested_UNet_Densenet5(nn.Module):
         #x2_0 = self.trans2(x3_0)
         #x1_0 = self.trans1(x2_0)
         #x0_0 = self.trans0(F.interpolate(x_out, scale_factor=8, mode='bilinear', align_corners=True))
-        x0_0 = self.trans0(self.upsample(conv5_3))
+        x0_0 = self.trans0(self.upsample(conv2_2))
         #x4_0 = self.trans4(F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True))
         #x3_0 = self.trans3(F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True))
         #x2_0 = self.trans2(F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True))
