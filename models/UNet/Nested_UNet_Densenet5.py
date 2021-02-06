@@ -52,9 +52,22 @@ class _ASPPModule(nn.Module):
         self.atrous_conv = nn.Conv2d(inplanes, planes, kernel_size=kernel_size, stride=1, padding=padding, dilation=dilation, bias=False)
         self.relu = nn.ReLU()
 
+        self._init_weight()
+
     def forward(self, x):
         x = self.atrous_conv(x)
         return self.relu(x)
+
+    def _init_weight(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                torch.nn.init.kaiming_normal_(m.weight)
+            elif isinstance(m, SynchronizedBatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
 
 class ASPP(nn.Module):
     def __init__(self, inplanes, BatchNorm):
@@ -72,6 +85,7 @@ class ASPP(nn.Module):
         self.conv1 = nn.Conv2d(256*5, 256, 1, bias=False)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.5)
+        self._init_weight()
 
     def forward(self, x):
         x1 = self.aspp1(x)
@@ -83,30 +97,35 @@ class ASPP(nn.Module):
         x = torch.cat((x1, x2, x3, x4, x5), dim=1)
 
         x = self.conv1(x)
+        x = self.bn1(x)
         x = self.relu(x)
 
         return self.dropout(x)
+
+    def _init_weight(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                torch.nn.init.kaiming_normal_(m.weight)
+            elif isinstance(m, SynchronizedBatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
                 
 class ScalePyramidModule(nn.Module):
     def __init__(self):
         super(ScalePyramidModule, self).__init__()
-        self.assp = ASPP(512, BatchNorm=None)
+        self.assp = ASPP(512, output_stride=16, BatchNorm=SynchronizedBatchNorm2d)
         self.can = ContextualModule(512, 512)
-        self.reg_layer = nn.Sequential(
-            nn.Conv2d(512, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 128, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True)
-        )
         
     def forward(self, *input):
-        conv2_2, conv3_3, conv4_4, conv5_4 = input 
-        conv4_4 = self.can(conv4_4)
-        ### Why don't you apply ASSP in higher resolution ??? ###
-        conv5_4 = torch.cat([F.interpolate(self.assp(conv5_4), scale_factor=2, mode='bilinear', align_corners=True), 
-                    self.reg_layer(F.interpolate(conv5_4, scale_factor=2, mode='bilinear', align_corners=True))], 1)
+        conv2_2, conv3_3, conv4_3, conv5_3 = input
         
-        return conv2_2, conv3_3, conv4_4, conv5_4
+        conv4_3 = self.can(conv4_3)
+        conv5_3 = self.assp(conv5_3)
+        
+        return conv2_2, conv3_3, conv4_3, conv5_3
 
 class Nested_UNet_Densenet5(nn.Module):
 
@@ -179,8 +198,8 @@ class Nested_UNet_Densenet5(nn.Module):
         #x_dn = self.transspm(input)
         x_dn = self.spm(*input)
 
-        conv2_2, conv3_3, conv4_4, conv5_4 = x_dn
-        x_out = torch.cat([conv5_4, conv4_4], 1)
+        conv2_2, conv3_3, conv4_3 conv5_4 = x_dn
+        x_out = torch.cat([conv5_4, conv4_3], 1)
 
         #x5_0 = self.trans5(x_dn)
         #x5_0 = x_dn
