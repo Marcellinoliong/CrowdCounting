@@ -198,7 +198,7 @@ class Nested_UNet_Densenet5(nn.Module):
         #x_dn = self.transspm(input)
         x_dn = self.spm(*input)
 
-        conv2_2, conv3_3, conv4_3 conv5_4 = x_dn
+        conv2_2, conv3_3, conv4_3, conv5_4 = x_dn
         x_out = torch.cat([conv5_4, conv4_3], 1)
 
         #x5_0 = self.trans5(x_dn)
