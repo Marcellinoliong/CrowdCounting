@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
 from collections import OrderedDict
-from .contextual_layer import ContextualModule
+from contextual_layer import ContextualModule
 from torch.utils import model_zoo
 
 class conv_block_nested(nn.Module):
@@ -157,9 +157,9 @@ class Nested_UNet_Densenet5(nn.Module):
 
         #self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
         self.trans0 = nn.Conv2d(in_channels=384, out_channels=64, kernel_size=1, bias=False)
-        self.trans1 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
-        self.trans2 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
-        self.trans3 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
+        #self.trans1 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
+        #self.trans2 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
+        #self.trans3 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
         #self.trans4 = nn.Conv2d(in_channels=896, out_channels=1024, kernel_size=1, bias=False)
         #self.trans5 = nn.Conv2d(in_channels=2208, out_channels=2048, kernel_size=1, bias=False)
 
@@ -181,10 +181,10 @@ class Nested_UNet_Densenet5(nn.Module):
 
         conv2_2, conv3_3, conv4_4, conv5_4 = x_dn
         #x_out = torch.cat([conv5_4, conv4_4], 1)
-        print(conv5_4.size())
-        print(conv4_4.size())
-        print(conv3_3.size())
-        print(conv2_2.size())
+        #print(conv5_4.size())
+        #print(conv4_4.size())
+        #print(conv3_3.size())
+        #print(conv2_2.size())
 
         #x5_0 = self.trans5(x_dn)
         #x5_0 = x_dn
@@ -205,16 +205,16 @@ class Nested_UNet_Densenet5(nn.Module):
         #x0_0 = F.interpolate(x_dn, scale_factor=32, mode='bilinear', align_corners=True)
 
         #x1_0 = self.conv1_0(self.pool(x0_0))
-        x0_0 = self.trans1(F.interpolate(conv4_4, scale_factor=4, mode='bilinear', align_corners=True))
+        x1_0 = conv2_2
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         #x2_0 = self.conv2_0(self.pool(x1_0))
-        x0_0 = self.trans2(F.interpolate(conv3_3, scale_factor=2, mode='bilinear', align_corners=True))
+        x2_0 = conv3_3
         x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, F.interpolate(x1_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
         #x3_0 = self.conv3_0(self.pool(x2_0))
-        x0_0 = self.trans3(F.interpolate(conv2_2, scale_factor=2, mode='bilinear', align_corners=True))
+        x3_0 = conv4_4
         x2_1 = self.conv2_1(torch.cat([x2_0, F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_2 = self.conv1_2(torch.cat([x1_0, x1_1, F.interpolate(x2_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_3 = self.conv0_3(torch.cat([x0_0, x0_1, x0_2, F.interpolate(x1_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
