@@ -207,24 +207,6 @@ class Trainer():
                     losses.update(self.net.loss.item())
 
                     maet = abs(gt_count-pred_cnt)
-                    '''
-                    if maet > 1000 :
-                        maet = maet - 150
-                    if maet > 900 :
-                        maet = maet - 120
-                    elif maet > 700 :
-                        maet = maet - 90
-                    elif maet > 500 :
-                        maet = maet - 70
-                    elif maet > 300 :
-                        maet = maet - 50
-                    elif maet > 200 :
-                        maet = maet - 25
-                    elif maet > 100 :
-                        maet = maet - 12
-                    elif maet > 50 :
-                        maet = maet - 7
-                    '''
                     
                     mset = (gt_count-pred_cnt) * (gt_count-pred_cnt)
 
@@ -232,7 +214,7 @@ class Trainer():
                     mses.update(mset)
                 if vi==0:
                     vis_results(self.exp_name, self.epoch, self.writer, self.restore_transform, img, pred_map, gt_map)
-                print( '[cnt: mae: %.1f]' % (maet))           
+                #print( '[cnt: mae: %.1f]' % (maet))           
 
             
         mae = maes.avg
