@@ -229,7 +229,7 @@ class Nested_UNet_Densenet5(nn.Module):
         #x3_0 = self.trans3(x4_0)
         #x2_0 = self.trans2(x3_0)
         #x1_0 = self.trans1(x2_0)
-        x0_0 = self.trans0(F.interpolate(conv5_3, scale_factor=8, mode='bilinear', align_corners=True))
+        x0_0 = self.trans0(F.interpolate(conv5_3, scale_factor=16, mode='bilinear', align_corners=True))
         #x4_0 = self.trans4(F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True))
         #x3_0 = self.trans3(F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True))
         #x2_0 = self.trans2(F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True))
