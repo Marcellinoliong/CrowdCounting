@@ -192,7 +192,7 @@ class Nested_UNet_Densenet5(nn.Module):
         self.spm = ScalePyramidModule()
 
         #self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
-        self.trans0 = nn.Conv2d(in_channels=384, out_channels=64, kernel_size=1, bias=False)
+        self.trans0 = nn.Conv2d(in_channels=256, out_channels=64, kernel_size=1, bias=False)
         #self.trans1 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
         #self.trans2 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
         #self.trans3 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
