@@ -4,7 +4,6 @@ import torch.nn.functional as F
 from torchvision import models
 from collections import OrderedDict
 from .contextual_layer import ContextualModule
-from .sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
 from torch.utils import model_zoo
 
 class conv_block_nested(nn.Module):
@@ -53,27 +52,15 @@ class _ASPPModule(nn.Module):
         self.atrous_conv = nn.Conv2d(inplanes, planes, kernel_size=kernel_size, stride=1, padding=padding, dilation=dilation, bias=False)
         self.relu = nn.ReLU()
 
-        self._init_weight()
-
     def forward(self, x):
         x = self.atrous_conv(x)
         return self.relu(x)
 
-    def _init_weight(self):
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                torch.nn.init.kaiming_normal_(m.weight)
-            elif isinstance(m, SynchronizedBatchNorm2d):
-                m.weight.data.fill_(1)
-                m.bias.data.zero_()
-            elif isinstance(m, nn.BatchNorm2d):
-                m.weight.data.fill_(1)
-                m.bias.data.zero_()
-
 class ASPP(nn.Module):
     def __init__(self, inplanes, BatchNorm):
         super(ASPP, self).__init__()
-        dilations = [1, 12, 24, 36]
+        #dilations = [1, 12, 24, 36]
+        dilations = [1, 6, 12, 18]
 
         self.aspp1 = _ASPPModule(inplanes, 256, 1, padding=0, dilation=dilations[0], BatchNorm=BatchNorm)
         self.aspp2 = _ASPPModule(inplanes, 256, 3, padding=dilations[1], dilation=dilations[1], BatchNorm=BatchNorm)
@@ -86,7 +73,6 @@ class ASPP(nn.Module):
         self.conv1 = nn.Conv2d(256*5, 256, 1, bias=False)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.5)
-        self._init_weight()
 
     def forward(self, x):
         x1 = self.aspp1(x)
@@ -98,21 +84,9 @@ class ASPP(nn.Module):
         x = torch.cat((x1, x2, x3, x4, x5), dim=1)
 
         x = self.conv1(x)
-        x = self.bn1(x)
         x = self.relu(x)
 
         return self.dropout(x)
-
-    def _init_weight(self):
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                torch.nn.init.kaiming_normal_(m.weight)
-            elif isinstance(m, SynchronizedBatchNorm2d):
-                m.weight.data.fill_(1)
-                m.bias.data.zero_()
-            elif isinstance(m, nn.BatchNorm2d):
-                m.weight.data.fill_(1)
-                m.bias.data.zero_()
                 
 class ScalePyramidModule(nn.Module):
     def __init__(self):
@@ -127,13 +101,14 @@ class ScalePyramidModule(nn.Module):
         )
         
     def forward(self, *input):
-        conv2_2, conv3_3, conv4_3, conv5_3 = input
+        conv2_2, conv3_3, conv4_4, conv5_4 = input 
+        conv4_4 = self.can(conv4_4)
+        ### Why don't you apply ASSP in higher resolution ??? ###
+        #conv5_4 = torch.cat([F.interpolate(self.assp(conv5_4), scale_factor=2, mode='bilinear', align_corners=True), 
+        #           self.reg_layer(F.interpolate(conv5_4, scale_factor=2, mode='bilinear', align_corners=True))], 1)
+        conv5_4 = self.assp(conv5_4)
         
-        conv4_3 = self.can(conv4_3)
-        conv5_3 = torch.cat([F.upsample_bilinear(self.assp(conv5_3), scale_factor=2), 
-                    self.reg_layer(F.upsample_bilinear(conv5_3, scale_factor=2))], 1)
-        
-        return conv2_2, conv3_3, conv4_3, conv5_3
+        return conv2_2, conv3_3, conv4_4, conv5_4
 
 class Nested_UNet_Densenet5(nn.Module):
 
@@ -183,7 +158,7 @@ class Nested_UNet_Densenet5(nn.Module):
         self.spm = ScalePyramidModule()
 
         #self.trans = nn.Conv2d(in_channels=2208, out_channels=64, kernel_size=1, bias=False)
-        self.trans0 = nn.Conv2d(in_channels=896, out_channels=64, kernel_size=1, bias=False)
+        self.trans0 = nn.Conv2d(in_channels=384, out_channels=64, kernel_size=1, bias=False)
         #self.trans1 = nn.Conv2d(in_channels=256, out_channels=128, kernel_size=1, bias=False)
         #self.trans2 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1, bias=False)
         #self.trans3 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1, bias=False)
@@ -206,8 +181,12 @@ class Nested_UNet_Densenet5(nn.Module):
         #x_dn = self.transspm(input)
         x_dn = self.spm(*input)
 
-        conv2_2, conv3_3, conv4_3, conv5_4 = x_dn
-        x_out = torch.cat([conv5_4, conv4_3], 1)
+        conv2_2, conv3_3, conv4_4, conv5_4 = x_dn
+        #x_out = torch.cat([conv5_4, conv4_4], 1)
+        #print(conv5_4.size())
+        #print(conv4_4.size())
+        #print(conv3_3.size())
+        #print(conv2_2.size())
 
         #x5_0 = self.trans5(x_dn)
         #x5_0 = x_dn
@@ -216,7 +195,7 @@ class Nested_UNet_Densenet5(nn.Module):
         #x3_0 = self.trans3(x4_0)
         #x2_0 = self.trans2(x3_0)
         #x1_0 = self.trans1(x2_0)
-        x0_0 = self.trans0(F.interpolate(x_out, scale_factor=8, mode='bilinear', align_corners=True))
+        x0_0 = self.trans0(F.interpolate(conv5_4, scale_factor=8, mode='bilinear', align_corners=True))
         #x4_0 = self.trans4(F.interpolate(x5_0, scale_factor=2, mode='bilinear', align_corners=True))
         #x3_0 = self.trans3(F.interpolate(x4_0, scale_factor=2, mode='bilinear', align_corners=True))
         #x2_0 = self.trans2(F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True))
@@ -227,14 +206,17 @@ class Nested_UNet_Densenet5(nn.Module):
         #x_dn = self.trans(x_dn)
         #x0_0 = F.interpolate(x_dn, scale_factor=32, mode='bilinear', align_corners=True)
 
-        x1_0 = self.conv1_0(self.pool(x0_0))
+        #x1_0 = self.conv1_0(self.pool(x0_0))
+        x1_0 = conv2_2
         x0_1 = self.conv0_1(torch.cat([x0_0, F.interpolate(x1_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        x2_0 = self.conv2_0(self.pool(x1_0))
+        #x2_0 = self.conv2_0(self.pool(x1_0))
+        x2_0 = conv3_3
         x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, F.interpolate(x1_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        x3_0 = self.conv3_0(self.pool(x2_0))
+        #x3_0 = self.conv3_0(self.pool(x2_0))
+        x3_0 = conv4_4
         x2_1 = self.conv2_1(torch.cat([x2_0, F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_2 = self.conv1_2(torch.cat([x1_0, x1_1, F.interpolate(x2_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_3 = self.conv0_3(torch.cat([x0_0, x0_1, x0_2, F.interpolate(x1_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
