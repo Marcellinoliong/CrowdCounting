@@ -103,8 +103,9 @@ class ScalePyramidModule(nn.Module):
         conv2_2, conv3_3, conv4_4, conv5_4 = input 
         conv4_4 = self.can(conv4_4)
         ### Why don't you apply ASSP in higher resolution ??? ###
-        conv5_4 = torch.cat([F.interpolate(self.assp(conv5_4), scale_factor=2, mode='bilinear', align_corners=True), 
-                    self.reg_layer(F.interpolate(conv5_4, scale_factor=2, mode='bilinear', align_corners=True))], 1)
+        #conv5_4 = torch.cat([F.interpolate(self.assp(conv5_4), scale_factor=2, mode='bilinear', align_corners=True), 
+        #           self.reg_layer(F.interpolate(conv5_4, scale_factor=2, mode='bilinear', align_corners=True))], 1)
+        conv5_4 = self.assp(conv5_4)
         
         return conv2_2, conv3_3, conv4_4, conv5_4
 
@@ -213,8 +214,8 @@ class Nested_UNet_Densenet5(nn.Module):
         x1_1 = self.conv1_1(torch.cat([x1_0, F.interpolate(x2_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_2 = self.conv0_2(torch.cat([x0_0, x0_1, F.interpolate(x1_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
 
-        x3_0 = self.conv3_0(self.pool(x2_0))
-        #x3_0 = conv4_4
+        #x3_0 = self.conv3_0(self.pool(x2_0))
+        x3_0 = conv4_4
         x2_1 = self.conv2_1(torch.cat([x2_0, F.interpolate(x3_0, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x1_2 = self.conv1_2(torch.cat([x1_0, x1_1, F.interpolate(x2_1, scale_factor=2, mode='bilinear', align_corners=True)], 1))
         x0_3 = self.conv0_3(torch.cat([x0_0, x0_1, x0_2, F.interpolate(x1_2, scale_factor=2, mode='bilinear', align_corners=True)], 1))
