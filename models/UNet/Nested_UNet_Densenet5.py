@@ -99,7 +99,7 @@ class ScalePyramidModule(nn.Module):
             nn.Conv2d(256, 128, kernel_size=3, padding=1),
             nn.ReLU(inplace=True)
         )
-        self.trans = nn.Conv2d(in_channels=384, out_channels=256, kernel_size=1, bias=False)
+        self.trans = nn.Conv2d(in_channels=256, out_channels=384, kernel_size=1, bias=False)
         
     def forward(self, *input):
         conv2_2, conv3_3, conv4_4, conv5_4 = input 
