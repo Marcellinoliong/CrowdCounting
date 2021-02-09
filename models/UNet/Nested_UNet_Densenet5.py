@@ -59,7 +59,8 @@ class _ASPPModule(nn.Module):
 class ASPP(nn.Module):
     def __init__(self, inplanes, BatchNorm):
         super(ASPP, self).__init__()
-        dilations = [1, 12, 24, 36]
+        #dilations = [1, 12, 24, 36]
+        dilations = [1, 6, 12, 18]
 
         self.aspp1 = _ASPPModule(inplanes, 256, 1, padding=0, dilation=dilations[0], BatchNorm=BatchNorm)
         self.aspp2 = _ASPPModule(inplanes, 256, 3, padding=dilations[1], dilation=dilations[1], BatchNorm=BatchNorm)
