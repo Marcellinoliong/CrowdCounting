@@ -217,8 +217,8 @@ class Nested_UNet_Densenet5(nn.Module):
 
         conv2_2, conv3_3, conv4_3, conv5_3 = x_dn
         #x_out = torch.cat([conv5_4, conv4_4], 1)
-        print(conv5_4.size())
-        print(conv4_4.size())
+        print(conv5_3.size())
+        print(conv4_3.size())
         print(conv3_3.size())
         print(conv2_2.size())
 
