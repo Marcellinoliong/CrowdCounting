@@ -113,6 +113,7 @@ class ASPP(nn.Module):
         #x5 = F.interpolate(x5, size=x4.size()[2:], mode='bilinear', align_corners=True)
         x = torch.cat((x1, x2, x3, x4), dim=1)
 
+        print(x.size())
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
