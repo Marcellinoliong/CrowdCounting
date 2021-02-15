@@ -180,22 +180,6 @@ class Nested_UNet_Densenet5(nn.Module):
         x_dn = self.spm(*input)
 
         conv2_2, conv3_3, conv4_4, conv5_4 = x_dn
-        #print(x_dn.size())
-        #print(x_dn.size())
-        #print(conv4_4.size())
-        #print(conv5_4.size())
-        #if conv4_4.shape[2] < conv5_4.shape[2]:
-        #    conv4_4.expand(-1, -1, conv5_4.shape[2], -1)
-        #elif conv4_4.shape[2] > conv5_4.shape[2]:
-        #    conv5_4.expand(-1, -1, conv4_4.shape[2], -1)
-
-        #if conv4_4.shape[3] < conv5_4.shape[3]:
-        #    conv4_4.expand(-1, -1, -1, conv5_4.shape[3])
-        #elif conv4_4.shape[3] > conv5_4.shape[3]:
-        #    conv5_4.expand(-1, -1, -1, conv4_4.shape[3])
-        
-        #print(conv4_4.size())
-        #print(conv5_4.size())
         #x_out = torch.cat([conv5_4, conv4_4], 1)
 
         #x5_0 = self.trans5(x_dn)
@@ -307,7 +291,7 @@ class VGG(nn.Module):
         conv5_4 = self.conv5_4(input)
         return conv2_2, conv3_4, conv4_4, conv5_4
 
-'''
+
 class BackEnd(nn.Module):
     def __init__(self):
         super(BackEnd, self).__init__()
@@ -341,7 +325,6 @@ class BackEnd(nn.Module):
         input = self.conv7(input)
 
         return input
-'''
 
 
 class BaseConv(nn.Module):
@@ -366,23 +349,6 @@ if __name__ == '__main__':
 
     x = torch.rand((1, 3, 576,768))
     lnet = Nested_UNet_Densenet5(3, 1, 'test')
-    self.bn.weight.data.fill_(1)
-    self.bn.bias.data.zero_()
-
-    def forward(self, input):
-        input = self.conv(input)
-        if self.use_bn:
-            input = self.bn(input)
-        if self.activation:
-            input = self.activation(input)
-
-        return input
-
-if __name__ == '__main__':
-    import time
-
-    x = torch.rand((1, 3, 512, 512))
-    lnet = Model()
     # calculate model size
     print(f'    Param: {(sum(p.numel() for p in lnet.parameters())):,}')
     print('    Total params: %.2fMB' % (sum(p.numel() for p in lnet.parameters()) / (1024.0 * 1024) * 4))
