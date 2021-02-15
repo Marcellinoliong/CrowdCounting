@@ -101,7 +101,7 @@ class ScalePyramidModule(nn.Module):
         
     def forward(self, *input):
         conv2_2, conv3_3, conv4_4, conv5_4 = input 
-        conv4_4 = self.can(conv4_4)
+        #conv4_4 = self.can(conv4_4)
         ### Why don't you apply ASSP in higher resolution ??? ###
         conv5_4 = torch.cat([F.interpolate(self.assp(conv5_4), scale_factor=2, mode='bilinear', align_corners=True), 
                     self.reg_layer(F.interpolate(conv5_4, scale_factor=2, mode='bilinear', align_corners=True))], 1)
