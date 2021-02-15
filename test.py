@@ -16,16 +16,20 @@ import scipy.io as sio
 from PIL import Image, ImageOps
 import shutil
 
-torch.cuda.set_device(0)
+#torch.cuda.set_device(0)
 torch.backends.cudnn.benchmark = True
 
 exp_name = 'SHHA_results'
 
 mean_std = ([0.452016860247, 0.447249650955, 0.431981861591],[0.23242045939, 0.224925786257, 0.221840232611])
+
+val_main_transform = own_transforms.Compose([
+    own_transforms.RandomCrop((576,768))
+])
 img_transform = standard_transforms.Compose([
-        standard_transforms.ToTensor(),
-        standard_transforms.Normalize(*mean_std)
-    ])
+    standard_transforms.ToTensor(),
+    standard_transforms.Normalize(*mean_std)
+])
 restore = standard_transforms.Compose([
         own_transforms.DeNormalize(*mean_std),
         standard_transforms.ToPILImage()
@@ -34,7 +38,7 @@ pil_to_tensor = standard_transforms.ToTensor()
 
 dataRoot = 'datasets/ProcessedData/shanghaitech_part_A/test'
 
-model_path = 'D:/FromBinusServer/08-18_20-07_SHHA_EfficientNet/all_ep_197_mae_25.2_mse_46.5.pth'
+model_path = 'D:/FromBinusServer/SPMUNetSHHA/all_ep_75_mae_64.1_mse_112.3.pth'
 
 def main():
     
@@ -45,18 +49,22 @@ def main():
 def test(file_list, model_path):
 
     net = CrowdCounter(cfg.GPU_ID,cfg.NET)
-    net.load_state_dict(torch.load(model_path))
-    net.cuda()
+    net.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
+    net.to("cpu")
+    #net.cuda()
+    net.cpu()
     net.eval()
 
 
     f1 = plt.figure(1)
 
+    difftotal = 0
+    difftotalsqr = 0
     gts = []
     preds = []
 
     for filename in file_list:
-    	print( filename )
+        print( filename )
         imgname = dataRoot + '/img/' + filename
         filename_no_ext = filename.split('.')[0]
 
@@ -71,12 +79,16 @@ def test(file_list, model_path):
             img = img.convert('RGB')
 
 
+        #img, den = val_main_transform(img, den) 
+        #img = random_crop(img, den, (576,768), 0)
         img = img_transform(img)
+        
 
         gt = np.sum(den)
         with torch.no_grad():
-            img = Variable(img[None,:,:,:]).cuda()
+            img = Variable(img[None,:,:,:]).cpu()
             pred_map = net.test_forward(img)
+        #print(pred_map.size())
 
         sio.savemat(exp_name+'/pred/'+filename_no_ext+'.mat',{'data':pred_map.squeeze().cpu().numpy()/100.})
         sio.savemat(exp_name+'/gt/'+filename_no_ext+'.mat',{'data':den})
@@ -120,6 +132,19 @@ def test(file_list, model_path):
 
         # sio.savemat(exp_name+'/'+filename_no_ext+'_pred_'+str(float(pred))+'.mat',{'data':pred_map})
 
+        if den.shape[0] < pred_map.shape[0]:
+            temp = np.zeros((pred_map.shape[0]-den.shape[0], den.shape[1]))
+            den=np.concatenate((den, temp),axis=0)
+        elif den.shape[0] > pred_map.shape[0]:
+            temp = np.zeros((den.shape[0]-pred_map.shape[0], pred_map.shape[1]))
+            pred_map=np.concatenate((pred_map, temp),axis=0)
+
+        if den.shape[1] < pred_map.shape[1]:
+            temp = np.zeros((den.shape[0], pred_map.shape[1]-den.shape[1]))
+            den=np.concatenate((den, temp),axis=1)
+        elif den.shape[1] > pred_map.shape[1]:
+            temp = np.zeros((pred_map.shape[0], den.shape[1]-pred_map.shape[1]))
+            pred_map=np.concatenate((pred_map, temp),axis=1)
         diff = den-pred_map
 
         diff_frame = plt.gca()
@@ -135,6 +160,13 @@ def test(file_list, model_path):
             bbox_inches='tight',pad_inches=0,dpi=150)
 
         plt.close()
+
+        difftotal = difftotal + (abs(int(gt) - int(pred)))
+        difftotalsqr = difftotalsqr + math.pow(int(gt) - int(pred), 2)
+    MAE = float(difftotal)/182
+    MSE = math.sqrt(difftotalsqr/182)
+    print('MAE : '+str(MAE))
+    print('MSE : '+str(MSE))
 
 def test2(file_list, model_path):
 
@@ -279,7 +311,22 @@ def test2(file_list, model_path):
         print('MAE : '+str(MAE))
         print('MSE : '+str(MSE))
                      
+def random_crop(img, den, dst_size, padding):
+    if padding > 0:
+        img = ImageOps.expand(img, border=padding, fill=0)
+ 
+    w, h = img.size
+    th, tw = dst_size
 
+    if w == tw and h == th:
+        return img
+    if w < tw or h < th:
+        return img.resize((tw, th), Image.BILINEAR), den.resize((tw, th), Image.BILINEAR)
+
+    x1 = random.randint(0, w - tw)
+    y1 = random.randint(0, h - th)
+    return img.crop((x1, y1, x1 + tw, y1 + th)), den[0:w - tw,0:h - th]
+        
 
 
 if __name__ == '__main__':

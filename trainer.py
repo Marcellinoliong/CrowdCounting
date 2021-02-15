@@ -203,18 +203,16 @@ class Trainer():
                 
                     pred_cnt = np.sum(pred_map[i_img])/self.cfg_data.LOG_PARA
                     gt_count = np.sum(gt_map[i_img])/self.cfg_data.LOG_PARA
-                    
-                    losses.update(self.net.loss.item())
 
                     maet = abs(gt_count-pred_cnt)
+                    mset = (gt_count-pred_cnt)*(gt_count-pred_cnt)
                     
-                    mset = (gt_count-pred_cnt) * (gt_count-pred_cnt)
-
-                    maes.update(maet)
-                    mses.update(mset)
+                    losses.update(self.net.loss.item())
+                    maes.update(abs(gt_count-pred_cnt))
+                    mses.update((gt_count-pred_cnt)*(gt_count-pred_cnt))
                 if vi==0:
                     vis_results(self.exp_name, self.epoch, self.writer, self.restore_transform, img, pred_map, gt_map)
-                #print( '[cnt: mae: %.1f]' % (maet))           
+                print( '[cnt: mae: %.1f]' % (maet))           
 
             
         mae = maes.avg
